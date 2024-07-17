@@ -34,6 +34,10 @@ const Permissions = lazy(() => import("./pages/MasterUser/MasterPermission"));
 const CreatePermission = lazy(() => import('./pages/MasterUser/MasterPermission/create'));
 const UpdatePermission = lazy(() => import('./pages/MasterUser/MasterPermission/update'));
 
+// Master Manual Stock
+const ManualStock = lazy(() => import("./pages/MasterStock/ManualStock"));
+const DetailManualStock = lazy(() => import("./pages/MasterStock/ManualStock/detail"));
+const ReceiveManualStock = lazy(() => import("./pages/MasterStock/ManualStock/receive"));
 
 function App() {
   const ability = createMongoAbility();
@@ -54,6 +58,11 @@ function App() {
               <Route path="receivepo" element={<ReceivePO />} />
               <Route path="po" element={<PurchaseOrderDetail />} />
               <Route path="po/detail/:uid" element={<DetailPONumber />} />
+
+               {/* Route Manual Stock */}
+               <Route path="manualstocks" element={<ManualStock />} />
+               <Route path="manualstock/detail/:uid" element={<DetailManualStock />} />
+               <Route path="manualstock/receive/:uid" element={<ReceiveManualStock />} />
               
               {/* Route User */}
               <Route path="profile" element={<Profiles />} />

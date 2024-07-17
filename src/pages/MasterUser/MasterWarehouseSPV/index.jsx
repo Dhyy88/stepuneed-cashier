@@ -6,21 +6,13 @@ import Tooltip from "@/components/ui/Tooltip";
 import Swal from "sweetalert2";
 import Button from "@/components/ui/Button";
 import Select from "react-select";
-
-import { useNavigate } from "react-router-dom";
 import ApiEndpoint from "../../../API/Api_EndPoint";
 import axios from "../../../API/Axios";
 import Loading from "../../../components/Loading";
 import LoadingButton from "../../../components/LoadingButton";
-<<<<<<< HEAD
-
-const Warehouses = () => {
-  const navigate = useNavigate();
-=======
 import Switch from "@/components/ui/Switch";
 
-const Warehouses = () => {
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+const SPVWarehouses = () => {
   const [data, setData] = useState({
     data: [],
     current_page: 1,
@@ -28,22 +20,6 @@ const Warehouses = () => {
     prev_page_url: null,
     next_page_url: null,
   });
-<<<<<<< HEAD
-  const [data_spv, setDataSPV] = useState([]);
-  const [email, setEmail] = useState("");
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [gender, setGender] = useState(null);
-  const [phone_number, setPhoneNumber] = useState("");
-  const [birth, setBirth] = useState("");
-
-  const [dealer, setDealer] = useState([]);
-  const [spv, setSPV] = useState([]);
-========
-  const [dealer, setDealer] = useState([]);
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
   const [email, setEmail] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -51,7 +27,6 @@ const Warehouses = () => {
   const [phone_number, setPhoneNumber] = useState("");
   const [birth, setBirth] = useState("");
 
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
   const [site, setSite] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingButton, setIsLoadingButton] = useState(false);
@@ -63,25 +38,13 @@ const Warehouses = () => {
     site: "",
     is_active: "",
   });
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
-  const [query_spv, setQuerySPV] = useState({
-    dealer: "",
-  });
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-  const [selectedDealer, setSelectedDealer] = useState(null);
-  const [selectedSite, setSelectedSite] = useState(null);
-  const [selectedSPV, setSelectedSPV] = useState(null);
-=======
   const [selectedSite, setSelectedSite] = useState(null);
   const [is_active, setIsActive] = useState("");
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
 
   async function getDataWarehouse(query) {
     setIsLoading(true);
     try {
-      const response = await axios.post(ApiEndpoint.WAREHOUSE, {
+      const response = await axios.post(ApiEndpoint.SPV_WH, {
         page: query?.page,
         search: query?.search,
         gender: query?.gender,
@@ -97,47 +60,6 @@ const Warehouses = () => {
     }
   }
 
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-  useEffect(() => {
-    getDataWarehouse(query);
-  }, [query]);
-
-<<<<<<< HEAD
-  const getDealer = () => {
-    axios.get(ApiEndpoint.DEALER).then((response) => {
-      setDealer(response?.data?.data);
-    });
-  };
-
-  const getSPV = () => {
-    axios.get(ApiEndpoint.SPV_ARMIES).then((response) => {
-      setSPV(response?.data?.data);
-    });
-  };
-========
-  async function getSPVData(query_spv) {
-    try {
-      const response = await axios.post(ApiEndpoint.SPV_ARMIES, {
-        dealer: query_spv?.dealer,
-      });
-      setDataSPV(response?.data?.data);
-    } catch (err) {
-      setError(err);
-    }
-  }
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-
-  const getDealer = () => {
-    axios.get(ApiEndpoint.DEALER).then((response) => {
-      setDealer(response?.data?.data);
-    });
-  };
-
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
   const getSite = async () => {
     try {
       const store_response = await axios.get(ApiEndpoint.STORE_LIST);
@@ -161,7 +83,7 @@ const Warehouses = () => {
     setIsLoadingButton(true);
     const confirmResult = await Swal.fire({
       title: "Konfirmasi",
-      text: "Anda yakin ingin menambahkan data pengguna ini?",
+      text: "Anda yakin ingin menambahkan data pengguna spv ini?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Ya, Tambahkan",
@@ -170,29 +92,16 @@ const Warehouses = () => {
 
     if (confirmResult.isConfirmed) {
       try {
-        await axios.post(ApiEndpoint.CREATE_WAREHOUSE, {
+        await axios.post(ApiEndpoint.CREATE_SPV_WH, {
           site: selectedSite?.value,
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-          email: email,
-          first_name: first_name,
-          last_name: last_name,
-          gender: gender,
-          phone_number: phone_number,
-          birth: birth,
-========
-          spv: selectedSPV?.value,
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
           email: email,
           first_name: first_name,
           last_name: last_name,
           gender: gender.value,
           phone_number: phone_number,
           birth: birth,
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
         });
-        Swal.fire("Sukses", "Data pengguna berhasil ditambahkan.", "success");
+        Swal.fire("Sukses", "Data pengguna spv warehouse berhasil ditambahkan.", "success");
         getDataWarehouse(query);
         resetForm();
         setIsLoadingButton(false);
@@ -234,7 +143,7 @@ const Warehouses = () => {
         });
 
         if (input && input.trim().toLowerCase() === "hapus") {
-          await axios.delete(`${ApiEndpoint.WAREHOUSE}/${uid}`);
+          await axios.delete(`${ApiEndpoint.SPV_WH}/${uid}`);
           Swal.fire(
             "Berhasil!",
             "Anda berhasil menghapus data akun ini.",
@@ -248,10 +157,8 @@ const Warehouses = () => {
     } catch (err) {
       Swal.fire("Gagal", err.response.data.message, "error");
     }
-  }
+  };
 
-<<<<<<< HEAD
-=======
   async function handleChangeStatus(uid) {
     try {
       const statusActive = is_active === "active" ? 0 : 1;
@@ -273,7 +180,7 @@ const Warehouses = () => {
 
       if (confirmation.isConfirmed) {
         const response = await axios.get(
-          `${ApiEndpoint.WAREHOUSE}/${uid}/toggle-active`,
+          `${ApiEndpoint.SPV_WH}/${uid}/toggle-active`,
           payload
         );
         setIsActive(!is_active);
@@ -286,7 +193,6 @@ const Warehouses = () => {
     }
   }
 
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
   const handlePrevPagination = () => {
     if (data.prev_page_url) {
       setQuery({ ...query, page: data.current_page - 1 });
@@ -322,38 +228,14 @@ const Warehouses = () => {
 
     return pageNumbers;
   };
-
+  
   useEffect(() => {
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-    getSite();
-    getDealer();
-    getSPV();
-========
-    getDataSalesExternal(query);
+    getDataWarehouse(query);
   }, [query]);
 
   useEffect(() => {
     getSite();
-    getDealer();
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
   }, []);
-  
-  useEffect(() => {
-    if (selectedDealer) {
-      setQuerySPV({ dealer: selectedDealer.value });
-    }
-  }, [selectedDealer]);
-
-  useEffect(() => {
-    if (query_spv.dealer) {
-      getSPVData(query_spv);
-    }
-  }, [query_spv]);
-=======
-    getSite();
-  }, []);
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
 
   const resetForm = () => {
     setEmail("");
@@ -363,14 +245,6 @@ const Warehouses = () => {
     setGender(null);
     setPhoneNumber("");
     setSelectedSite(null);
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
-    setSelectedDealer(null);
-    setSelectedSPV(null);
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
     setError(null);
   };
 
@@ -378,48 +252,18 @@ const Warehouses = () => {
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-8 col-span-12">
-<<<<<<< HEAD
-          <Card title="Data Pengguna Gudang SJM">
-=======
-          <Card title="Data Admin Warehouse SJM">
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+          <Card title="Data SPV Warehouse SJM">
             <div className="flex items-center mb-4 justify-between ">
               <div className="flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4 mb-2">
                   <select
                     className="form-control py-2 "
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
-                    value={query.dealer}
-                    onChange={(event) =>
-                      setQuery({ ...query, dealer: event.target.value })
-                    }
-                  >
-                    <option value="">Dealer</option>
-                    {dealer?.map((dealer) => (
-                      <option key={dealer.uid} value={dealer.uid}>
-                        {dealer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="row-span-3 md:row-span-4 mb-2">
-                  <select
-                    className="form-control py-2 "
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                     value={query.site}
                     onChange={(event) =>
                       setQuery({ ...query, site: event.target.value })
                     }
                   >
-<<<<<<< HEAD
-                    <option value="">Cabang</option>
-=======
                     <option value="">Semua Cabang</option>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                     {site?.map((site) => (
                       <option key={site.uid} value={site.uid}>
                         {site.name}
@@ -435,11 +279,7 @@ const Warehouses = () => {
                       setQuery({ ...query, gender: event.target.value })
                     }
                   >
-<<<<<<< HEAD
-                    <option value="">Gender</option>
-=======
                     <option value="">Semua Gender</option>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                     <option value="L">Laki-laki</option>
                     <option value="P">Perempuan</option>
                   </select>
@@ -466,7 +306,7 @@ const Warehouses = () => {
                     onChange={(event) =>
                       setQuery({ ...query, search: event.target.value })
                     }
-                    placeholder="Cari pengguna gudang..."
+                    placeholder="Cari spv gudang..."
                   />
                 </div>
               </div>
@@ -480,12 +320,6 @@ const Warehouses = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                              Kode Referral
-                            </th>
-                            <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                               Email
                             </th>
                             <th scope="col" className=" table-th ">
@@ -523,12 +357,6 @@ const Warehouses = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                              Kode Referral
-                            </th>
-                            <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                               Email
                             </th>
                             <th scope="col" className=" table-th ">
@@ -563,15 +391,7 @@ const Warehouses = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
                             Pengguna Gudang belum tersedia
-========
-                            Sales army belum tersedia
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-                            Pengguna Gudang belum tersedia
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                           </span>
                         </div>
                       </div>
@@ -581,12 +401,6 @@ const Warehouses = () => {
                       <thead className="bg-slate-200 dark:bg-slate-700">
                         <tr>
                           <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                            Kode Referral
-                          </th>
-                          <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             Email
                           </th>
                           <th scope="col" className=" table-th ">
@@ -615,31 +429,8 @@ const Warehouses = () => {
                       <tbody className="bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700">
                         {data?.data?.map((item, index) => (
                           <tr key={index}>
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
                             {item?.email ? (
                               <td className="table-td">{item?.email}</td>
-========
-                            {item?.army_profile?.referral_code?.code ? (
-                              <td className="table-td">
-                                {item?.army_profile?.referral_code?.code}
-                              </td>
-                            ) : (
-                              <td className="table-td">-</td>
-                            )}
-
-                            <td className="table-td">{item.email}</td>
-
-                            {item?.army_profile?.first_name ? (
-                              <td className="table-td">
-                                {item?.army_profile?.first_name}{" "}
-                                {item.army_profile?.last_name}
-                              </td>
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-                            {item?.email ? (
-                              <td className="table-td">{item?.email}</td>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             ) : (
                               <td className="table-td">-</td>
                             )}
@@ -680,25 +471,7 @@ const Warehouses = () => {
                             ) : (
                               <td className="table-td">-</td>
                             )}
-<<<<<<< HEAD
-                            <td className="table-td">
-=======
-                            {/* <td className="table-td">
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-                              {item?.is_active === true ? (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-500">
-                                  Aktif
-                                </span>
-                              ) : (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
-                                  Nonaktif
-                                </span>
-                              )}
-<<<<<<< HEAD
-=======
-                            </td> */}
-
-                            <td className="table-td">
+                              <td className="table-td">
                               <Switch
                                 label={item?.is_active ? "Aktif" : "Nonaktif"}
                                 activeClass="bg-success-500"
@@ -708,7 +481,6 @@ const Warehouses = () => {
                                 prevIcon="heroicons-outline:check"
                                 nextIcon="heroicons-outline:x"
                               />
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             </td>
 
                             <td className="table-td">
@@ -793,11 +565,7 @@ const Warehouses = () => {
           </Card>
         </div>
         <div className="lg:col-span-4 col-span-12">
-<<<<<<< HEAD
-          <Card title={"Tambah Pengguna Gudang"}>
-=======
-          <Card title={"Tambah Admin Warehouse"}>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+          <Card title={"Tambah SPV Warehouse"}>
             <div className="text-sm text-slate-600 font-normal bg-white dark:bg-slate-900 dark:text-slate-300 rounded p-5">
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
                 <label htmlFor=" hh" className="form-label ">
@@ -888,27 +656,6 @@ const Warehouses = () => {
                 <Select
                   className="react-select mt-2"
                   classNamePrefix="select"
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-                  placeholder="Pilih jenis kelamin..."
-                  value={gender}
-                  onChange={handleGenderChange}
-========
-                  placeholder="Pilih dealer..."
-                  options={dealer?.map((dealer) => ({
-                    value: dealer?.uid,
-                    label: dealer?.name,
-                  }))}
-                  onChange={(selectedOption) =>
-                    setSelectedDealer(selectedOption)
-                  }
-                  value={selectedDealer}
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-                  isClearable
-                  options={[
-                    { value: "Laki-Laki", label: "Laki-Laki" },
-                    { value: "Perempuan", label: "Perempuan" },
-=======
                   placeholder="Pilih jenis kelamin..."
                   value={gender}
                   onChange={handleGenderChange}
@@ -916,7 +663,6 @@ const Warehouses = () => {
                   options={[
                     { value: "L", label: "Laki-Laki" },
                     { value: "P", label: "Perempuan" },
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                   ]}
                 />
                 {error && (
@@ -925,10 +671,6 @@ const Warehouses = () => {
                   </span>
                 )}
               </div>
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
 
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
                 <Textinput
@@ -945,30 +687,6 @@ const Warehouses = () => {
                 )}
               </div>
 
-<<<<<<< HEAD
-            
-========
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <label htmlFor=" hh" className="form-label ">
-                  Pilih SPV (Optional)
-                </label>
-                <Select
-                  className="react-select mt-2"
-                  classNamePrefix="select"
-                  placeholder="Pilih SPV..."
-                  options={data_spv?.map((item) => ({
-                    value: item?.uid,
-                    // label: `${item?.email}`,
-                    label: `${item?.spv_army_profile?.first_name ? item.spv_army_profile.first_name + ' ' : ''}${item?.spv_army_profile?.last_name || '' || item?.email}`,
-                  }))}
-                  onChange={(selectedOption) => setSelectedSPV(selectedOption)}
-                  value={selectedSPV}
-                  isClearable
-                />
-              </div>
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
               <div className="grid justify-items-end">
                 <div className="grid xl:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-3 ">
                   <Button
@@ -993,4 +711,4 @@ const Warehouses = () => {
   );
 };
 
-export default Warehouses;
+export default SPVWarehouses;

@@ -2,16 +2,19 @@ import React, { useState, useEffect } from "react";
 import Textinput from "@/components/ui/Textinput";
 import Card from "@/components/ui/Card";
 import Icon from "@/components/ui/Icon";
+import Modal from "@/components/ui/Modal";
 import Tooltip from "@/components/ui/Tooltip";
-import axios from "../../../API/Axios";
-import ApiEndpoint from "../../../API/Api_EndPoint";
 import Swal from "sweetalert2";
 import Button from "@/components/ui/Button";
+import axios from "../../../API/Axios";
+import ApiEndpoint from "../../../API/Api_EndPoint";
 import Loading from "../../../components/Loading";
+import LoadingButton from "../../../components/LoadingButton";
 import { useNavigate } from "react-router-dom";
-import Product from "@/assets/images/logo/logopng.png";
+import Select from "react-select";
+// import { Select } from "antd";
 
-const StockOpname = () => {
+const Suppliers = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     data: [],
@@ -20,48 +23,26 @@ const StockOpname = () => {
     prev_page_url: null,
     next_page_url: null,
   });
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState([]);
+  const [query, setQuery] = useState({ search: "", paginate: 7 });
 
-  const [query, setQuery] = useState({
-    search: "",
-    paginate: 8,
-    location: "",
-    date: "",
-  });
-
-  async function getDataStock(query) {
+  async function getDataSupplier(query) {
     setIsLoading(true);
     try {
-      const response = await axios.post(ApiEndpoint.STOCKOPNAME, {
+      const response = await axios.post(ApiEndpoint.SUPPLIER, {
         page: query?.page,
+        paginate: query?.paginate,
         search: query?.search,
-        paginate: 8,
-        location: query?.location,
-        date: query?.date,
       });
       setData(response?.data?.data);
       setIsLoading(false);
-    } catch (err) {
-      setError(err);
+    } catch (error) {
+      Swal.fire("error", error?.response?.data?.message, "error");
       setIsLoading(false);
     }
   }
-
-  const getLocation = () => {
-    axios.get(ApiEndpoint.LOCATION_STOCK).then((response) => {
-      setLocation(response?.data);
-    });
-  };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    getDataStock(query);
-  }, [query]);
 
   const handlePrevPagination = () => {
     if (data.prev_page_url) {
@@ -99,35 +80,37 @@ const StockOpname = () => {
     return pageNumbers;
   };
 
+  useEffect(() => {
+    getDataSupplier(query);
+  }, [query]);
+
   return (
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-12 col-span-12">
-          <Card title="Stock Opname">
+          <Card title="Data Supplier">
             <div className="md:flex justify-between items-center mb-4">
               <div className="md:flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4">
                   <Button
-                    text="Tambah Stock Opname"
+                    text="Tambah Supplier"
                     className="btn-primary dark w-full btn-sm "
-                    onClick={() => navigate(`/stockopname/create`)}
+                    onClick={() => navigate(`/supplier/create`)}
                   />
                 </div>
               </div>
               <div className="md:flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4">
                   <Textinput
-                    type="date"
                     // value={query || ""}
                     onChange={(event) =>
-                      setQuery({ ...query, date: event.target.value })
+                      setQuery({ ...query, search: event.target.value })
                     }
-                    placeholder="Cari tanggal SJM..."
+                    placeholder="Cari supplier..."
                   />
                 </div>
               </div>
             </div>
-
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
                 <div className="overflow-hidden ">
@@ -137,13 +120,16 @@ const StockOpname = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              Tanggal Laporan
+                              Kode Supplier
                             </th>
                             <th scope="col" className=" table-th ">
-                              Catatan
+                              Nama
                             </th>
                             <th scope="col" className=" table-th ">
-                              Laporan Dari
+                              Email
+                            </th>
+                            <th scope="col" className=" table-th ">
+                              No Telepon
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -162,13 +148,16 @@ const StockOpname = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              Tanggal Laporan
+                              Kode Supplier
                             </th>
                             <th scope="col" className=" table-th ">
-                              Catatan
+                              Nama
                             </th>
                             <th scope="col" className=" table-th ">
-                              Laporan Dari
+                              Email
+                            </th>
+                            <th scope="col" className=" table-th ">
+                              No Telepon
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -185,7 +174,7 @@ const StockOpname = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-                            Stock Opname belum tersedia
+                            Supplier belum tersedia
                           </span>
                         </div>
                       </div>
@@ -195,13 +184,16 @@ const StockOpname = () => {
                       <thead className="bg-slate-200 dark:bg-slate-700">
                         <tr>
                           <th scope="col" className=" table-th ">
-                            Tanggal Laporan
+                            Kode Supplier
                           </th>
                           <th scope="col" className=" table-th ">
-                            Catatan
+                            Nama
                           </th>
                           <th scope="col" className=" table-th ">
-                            Laporan Dari
+                            Email
+                          </th>
+                          <th scope="col" className=" table-th ">
+                            No Telepon
                           </th>
                           <th scope="col" className=" table-th ">
                             Aksi
@@ -211,14 +203,10 @@ const StockOpname = () => {
                       <tbody className="bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700">
                         {data?.data?.map((item, index) => (
                           <tr key={index}>
-                            <td className="table-td">{item.reported_at}</td>
-                            <td className="table-td">{item?.note} </td>
-                            <td className="table-td">
-                              {item?.report_by?.profile?.first_name}{" "}
-                              {item?.report_by?.profile?.last_name}{" "}
-                           
-                            </td>
-                           
+                            <td className="table-td">{item?.code} </td>
+                            <td className="table-td">{item?.name} </td>
+                            <td className="table-td">{item?.email} </td>
+                            <td className="table-td">{item?.phone_number} </td>
 
                             <td className="table-td">
                               <div className="flex space-x-3 rtl:space-x-reverse">
@@ -232,9 +220,7 @@ const StockOpname = () => {
                                     className="action-btn"
                                     type="button"
                                     onClick={() =>
-                                      navigate(
-                                        `/stockopname/detail/${item.uid}`
-                                      )
+                                      navigate(`/supplier/detail/${item.uid}`)
                                     }
                                   >
                                     <Icon icon="heroicons:eye" />
@@ -247,61 +233,62 @@ const StockOpname = () => {
                       </tbody>
                     </table>
                   )}
-                </div>
-                <div className="custom-class flex justify-end mt-4">
-                  <ul className="pagination">
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleFirstPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-double-left" />
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handlePrevPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-left" />
-                      </button>
-                    </li>
-
-                    {generatePageNumbers().map((pageNumber) => (
-                      <li key={pageNumber.page}>
+                  <div className="custom-class flex justify-end mt-4">
+                    <ul className="pagination">
+                      <li>
                         <button
-                          className={`${
-                            pageNumber.active ? "active" : ""
-                          } page-link`}
-                          onClick={() =>
-                            setQuery({ ...query, page: pageNumber.page })
-                          }
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleFirstPagination}
                         >
-                          {pageNumber.page}
+                          <Icon icon="heroicons-outline:chevron-double-left" />
                         </button>
                       </li>
-                    ))}
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handlePrevPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-left" />
+                        </button>
+                      </li>
 
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleNextPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-right" />
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleLastPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-double-right" />
-                      </button>
-                    </li>
-                  </ul>
+                      {generatePageNumbers().map((pageNumber) => (
+                        <li key={pageNumber.page}>
+                          <button
+                            className={`${
+                              pageNumber.active ? "active" : ""
+                            } page-link`}
+                            onClick={() =>
+                              setQuery({ ...query, page: pageNumber.page })
+                            }
+                          >
+                            {pageNumber.page}
+                          </button>
+                        </li>
+                      ))}
+
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleNextPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-right" />
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleLastPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-double-right" />
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
+            {/*end*/}
           </Card>
         </div>
       </div>
@@ -309,4 +296,4 @@ const StockOpname = () => {
   );
 };
 
-export default StockOpname;
+export default Suppliers;

@@ -10,7 +10,7 @@ export const menuItems = [
   //Menu Master Inventory
   {
     isHeadr: true,
-    title: "Master Data Warehouse",
+    title: "Master Data Gudang",
   },
   {
     title: "Master PO",
@@ -29,12 +29,12 @@ export const menuItems = [
   },
 
   {
-    title: "Master Stock",
+    title: "Master Stok",
     icon: "heroicons-outline:rectangle-group",
     link: "/app/home",
     child: [
       {
-        childtitle: "Data Stock",
+        childtitle: "Data Stok",
         childlink: "/stock",
       },
       {
@@ -42,6 +42,12 @@ export const menuItems = [
         childlink: "/stockopname"
       },  
     ]
+  },
+
+  {
+    title: "Manual Stok",
+    icon: "heroicons-outline:rectangle-group",
+    link: "/manualstocks",
   },
 
   // {

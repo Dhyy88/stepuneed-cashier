@@ -8,19 +8,15 @@ import Button from "@/components/ui/Button";
 import Select from "react-select";
 
 import { useNavigate } from "react-router-dom";
-import ApiEndpoint from "../../../API/Api_EndPoint";
-import axios from "../../../API/Axios";
-import Loading from "../../../components/Loading";
-import LoadingButton from "../../../components/LoadingButton";
-<<<<<<< HEAD
+import ApiEndpoint from "../../../../API/Api_EndPoint";
+import axios from "../../../../API/Axios";
+import Loading from "../../../../components/Loading";
+import LoadingButton from "../../../../components/LoadingButton";
 
-const Warehouses = () => {
+import ProfileImageMen from "@/assets/images/avatar/13.png";
+
+const SalesArmySPV = () => {
   const navigate = useNavigate();
-=======
-import Switch from "@/components/ui/Switch";
-
-const Warehouses = () => {
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
   const [data, setData] = useState({
     data: [],
     current_page: 1,
@@ -28,107 +24,63 @@ const Warehouses = () => {
     prev_page_url: null,
     next_page_url: null,
   });
-<<<<<<< HEAD
-  const [data_spv, setDataSPV] = useState([]);
+  const [data_army, setDataArmy] = useState([]);
   const [email, setEmail] = useState("");
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [gender, setGender] = useState(null);
-  const [phone_number, setPhoneNumber] = useState("");
-  const [birth, setBirth] = useState("");
-
   const [dealer, setDealer] = useState([]);
-  const [spv, setSPV] = useState([]);
-========
-  const [dealer, setDealer] = useState([]);
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-  const [email, setEmail] = useState("");
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [gender, setGender] = useState("");
-  const [phone_number, setPhoneNumber] = useState("");
-  const [birth, setBirth] = useState("");
-
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+  const [armies, setArmies] = useState([]);
   const [site, setSite] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingButton, setIsLoadingButton] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState({
+    status: "",
     search: "",
     gender: "",
     paginate: 8,
+    dealer: "",
     site: "",
     is_active: "",
   });
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
-  const [query_spv, setQuerySPV] = useState({
+  const [query_army, setQueryArmy] = useState({
     dealer: "",
   });
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
   const [selectedDealer, setSelectedDealer] = useState(null);
   const [selectedSite, setSelectedSite] = useState(null);
-  const [selectedSPV, setSelectedSPV] = useState(null);
-=======
-  const [selectedSite, setSelectedSite] = useState(null);
-  const [is_active, setIsActive] = useState("");
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+  const [selectedArmy, setSelectedArmy] = useState(null);
 
-  async function getDataWarehouse(query) {
+  const [army_select, setArmyInput] = useState([""]);
+
+  async function getDataSalesExternal(query) {
     setIsLoading(true);
     try {
-      const response = await axios.post(ApiEndpoint.WAREHOUSE, {
+      const response = await axios.post(ApiEndpoint.SPV_ARMIES, {
         page: query?.page,
         search: query?.search,
+        status: query?.status,
         gender: query?.gender,
-        paginate: 7,
+        paginate: 5,
+        dealer: query?.dealer,
         site: query?.site,
         is_active: query?.is_active,
       });
       setData(response?.data?.data);
       setIsLoading(false);
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      setError(err);
       setIsLoading(false);
     }
   }
 
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-  useEffect(() => {
-    getDataWarehouse(query);
-  }, [query]);
-
-<<<<<<< HEAD
-  const getDealer = () => {
-    axios.get(ApiEndpoint.DEALER).then((response) => {
-      setDealer(response?.data?.data);
-    });
-  };
-
-  const getSPV = () => {
-    axios.get(ApiEndpoint.SPV_ARMIES).then((response) => {
-      setSPV(response?.data?.data);
-    });
-  };
-========
-  async function getSPVData(query_spv) {
+  async function getArmyData(query_army) {
     try {
-      const response = await axios.post(ApiEndpoint.SPV_ARMIES, {
-        dealer: query_spv?.dealer,
+      const response = await axios.post(ApiEndpoint.SALES_EXTERNAL, {
+        dealer: query_army?.dealer,
       });
-      setDataSPV(response?.data?.data);
+      setDataArmy(response?.data?.data);
     } catch (err) {
       setError(err);
     }
   }
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
 
   const getDealer = () => {
     axios.get(ApiEndpoint.DEALER).then((response) => {
@@ -136,8 +88,12 @@ const Warehouses = () => {
     });
   };
 
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+  const getArmies = () => {
+    axios.get(ApiEndpoint.SALES_EXTERNAL_NO_SPV).then((response) => {
+      setArmies(response?.data?.data);
+    });
+  };
+
   const getSite = async () => {
     try {
       const store_response = await axios.get(ApiEndpoint.STORE_LIST);
@@ -153,15 +109,11 @@ const Warehouses = () => {
     }
   };
 
-  const handleGenderChange = (selectedOption) => {
-    setGender(selectedOption);
-  };
-
   const onSubmit = async () => {
     setIsLoadingButton(true);
     const confirmResult = await Swal.fire({
       title: "Konfirmasi",
-      text: "Anda yakin ingin menambahkan data pengguna ini?",
+      text: "Anda yakin ingin menambahkan data sales SPV?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Ya, Tambahkan",
@@ -170,30 +122,14 @@ const Warehouses = () => {
 
     if (confirmResult.isConfirmed) {
       try {
-        await axios.post(ApiEndpoint.CREATE_WAREHOUSE, {
+        await axios.post(ApiEndpoint.CREATE_SPV_ARMIES, {
+          email: email,
+          dealer: selectedDealer?.value,
           site: selectedSite?.value,
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-          email: email,
-          first_name: first_name,
-          last_name: last_name,
-          gender: gender,
-          phone_number: phone_number,
-          birth: birth,
-========
-          spv: selectedSPV?.value,
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-          email: email,
-          first_name: first_name,
-          last_name: last_name,
-          gender: gender.value,
-          phone_number: phone_number,
-          birth: birth,
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+          armies: army_select.map((armyInput) => armyInput.value),
         });
-        Swal.fire("Sukses", "Data pengguna berhasil ditambahkan.", "success");
-        getDataWarehouse(query);
+        Swal.fire("Sukses", "Data sales berhasil ditambahkan.", "success");
+        getDataSalesExternal(query);
         resetForm();
         setIsLoadingButton(false);
       } catch (err) {
@@ -210,7 +146,7 @@ const Warehouses = () => {
     try {
       const result = await Swal.fire({
         icon: "question",
-        title: "Apakah Anda yakin ingin menghapus akun ini?",
+        title: "Apakah Anda yakin ingin menghapus SPV sales ini?",
         text: "Anda tidak akan dapat mengembalikannya!",
         showCancelButton: true,
         confirmButtonText: "Ya, Hapus",
@@ -234,15 +170,15 @@ const Warehouses = () => {
         });
 
         if (input && input.trim().toLowerCase() === "hapus") {
-          await axios.delete(`${ApiEndpoint.WAREHOUSE}/${uid}`);
+          await axios.delete(`${ApiEndpoint.SPV_ARMIES}/${uid}`);
           Swal.fire(
             "Berhasil!",
-            "Anda berhasil menghapus data akun ini.",
+            "Anda berhasil menghapus data SPV sales ini.",
             "success"
           );
-          getDataWarehouse(query);
+          getDataSalesExternal(query);
         } else {
-          Swal.fire("Batal", "Hapus data akun warehouse dibatalkan.", "info");
+          Swal.fire("Batal", "Hapus data SPV sales dibatalkan.", "info");
         }
       }
     } catch (err) {
@@ -250,43 +186,22 @@ const Warehouses = () => {
     }
   }
 
-<<<<<<< HEAD
-=======
-  async function handleChangeStatus(uid) {
-    try {
-      const statusActive = is_active === "active" ? 0 : 1;
-      const nonActive = is_active === "off" ? 1 : 0;
-      const payload = {
-        // uid: uid,
-        active: statusActive,
-        off: nonActive,
-      };
+  const addArmyInput = () => {
+    setArmyInput([...army_select, ""]);
+  };
 
-      const confirmation = await Swal.fire({
-        title: "Konfirmasi",
-        text: "Apakah Anda yakin ingin mengubah status akun ini?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Ya, Ubah",
-        cancelButtonText: "Batal",
-      });
+  const updateArmyInput = (index, value) => {
+    const newarmy_select = [...army_select];
+    newarmy_select[index] = value;
+    setArmyInput(newarmy_select);
+  };
 
-      if (confirmation.isConfirmed) {
-        const response = await axios.get(
-          `${ApiEndpoint.WAREHOUSE}/${uid}/toggle-active`,
-          payload
-        );
-        setIsActive(!is_active);
-        getDataWarehouse(query);
-      } else {
+  const removeArmyInput = (index) => {
+    const newarmy_select = [...army_select];
+    newarmy_select.splice(index, 1);
+    setArmyInput(newarmy_select);
+  };
 
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
   const handlePrevPagination = () => {
     if (data.prev_page_url) {
       setQuery({ ...query, page: data.current_page - 1 });
@@ -324,53 +239,32 @@ const Warehouses = () => {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-    getSite();
-    getDealer();
-    getSPV();
-========
     getDataSalesExternal(query);
   }, [query]);
 
   useEffect(() => {
-    getSite();
-    getDealer();
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-  }, []);
-  
-  useEffect(() => {
     if (selectedDealer) {
-      setQuerySPV({ dealer: selectedDealer.value });
+      setQueryArmy({ dealer: selectedDealer.value });
     }
   }, [selectedDealer]);
 
   useEffect(() => {
-    if (query_spv.dealer) {
-      getSPVData(query_spv);
+    if (query_army.dealer) {
+      getArmyData(query_army);
     }
-  }, [query_spv]);
-=======
+  }, [query_army]);
+
+  useEffect(() => {
     getSite();
+    getDealer();
+    getArmies();
   }, []);
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
 
   const resetForm = () => {
     setEmail("");
-    setFirstName("");
-    setLastName("");
-    setBirth("");
-    setGender(null);
-    setPhoneNumber("");
     setSelectedSite(null);
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
     setSelectedDealer(null);
-    setSelectedSPV(null);
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+    setArmyInput([""]);
     setError(null);
   };
 
@@ -378,19 +272,12 @@ const Warehouses = () => {
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-8 col-span-12">
-<<<<<<< HEAD
-          <Card title="Data Pengguna Gudang SJM">
-=======
-          <Card title="Data Admin Warehouse SJM">
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+          <Card title="Data SPV Army">
             <div className="flex items-center mb-4 justify-between ">
               <div className="flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4 mb-2">
                   <select
                     className="form-control py-2 "
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-========
                     value={query.dealer}
                     onChange={(event) =>
                       setQuery({ ...query, dealer: event.target.value })
@@ -407,19 +294,12 @@ const Warehouses = () => {
                 <div className="row-span-3 md:row-span-4 mb-2">
                   <select
                     className="form-control py-2 "
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                     value={query.site}
                     onChange={(event) =>
                       setQuery({ ...query, site: event.target.value })
                     }
                   >
-<<<<<<< HEAD
                     <option value="">Cabang</option>
-=======
-                    <option value="">Semua Cabang</option>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                     {site?.map((site) => (
                       <option key={site.uid} value={site.uid}>
                         {site.name}
@@ -430,18 +310,16 @@ const Warehouses = () => {
                 <div className="row-span-3 md:row-span-4 mb-2">
                   <select
                     className="form-control py-2 "
-                    value={query.gender}
+                    value={query.status}
                     onChange={(event) =>
-                      setQuery({ ...query, gender: event.target.value })
+                      setQuery({ ...query, status: event.target.value })
                     }
                   >
-<<<<<<< HEAD
-                    <option value="">Gender</option>
-=======
-                    <option value="">Semua Gender</option>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-                    <option value="L">Laki-laki</option>
-                    <option value="P">Perempuan</option>
+                    <option value="">Status Data</option>
+                    <option value="approved">Disetujui</option>
+                    <option value="rejected">Ditolak</option>
+                    <option value="review">Review</option>
+                    <option value="incomplete">Belum Registrasi</option>
                   </select>
                 </div>
                 <div className="row-span-3 md:row-span-4 mb-2">
@@ -457,6 +335,19 @@ const Warehouses = () => {
                     <option value="0">Nonaktif</option>
                   </select>
                 </div>
+                <div className="row-span-3 md:row-span-4 mb-2">
+                  <select
+                    className="form-control py-2 "
+                    value={query.gender}
+                    onChange={(event) =>
+                      setQuery({ ...query, gender: event.target.value })
+                    }
+                  >
+                    <option value="">Gender</option>
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
+                  </select>
+                </div>
               </div>
               <div className="md:flex items-center gap-3 ml-3">
                 <div className="row-span-3 md:row-span-4 mb-2">
@@ -466,7 +357,7 @@ const Warehouses = () => {
                     onChange={(event) =>
                       setQuery({ ...query, search: event.target.value })
                     }
-                    placeholder="Cari pengguna gudang..."
+                    placeholder="Cari sales SPV..."
                   />
                 </div>
               </div>
@@ -480,12 +371,6 @@ const Warehouses = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                              Kode Referral
-                            </th>
-                            <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                               Email
                             </th>
                             <th scope="col" className=" table-th ">
@@ -495,16 +380,16 @@ const Warehouses = () => {
                               No Telepon
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Lahir
+                              Status Data
                             </th>
                             <th scope="col" className=" table-th ">
-                              Jenis Kelamin
+                              Status Akun
                             </th>
                             <th scope="col" className=" table-th ">
-                              Cabang SJM
+                              Total Army
                             </th>
                             <th scope="col" className=" table-th ">
-                              Status
+                              Foto Profil
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -523,31 +408,22 @@ const Warehouses = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                              Kode Referral
-                            </th>
-                            <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                               Email
                             </th>
                             <th scope="col" className=" table-th ">
                               Nama
                             </th>
                             <th scope="col" className=" table-th ">
-                              No Telepon
+                              Status Data
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Lahir
+                              Status Akun
                             </th>
                             <th scope="col" className=" table-th ">
-                              Jenis Kelamin
+                              Total Army
                             </th>
                             <th scope="col" className=" table-th ">
-                              Cabang SJM
-                            </th>
-                            <th scope="col" className=" table-th ">
-                              Status
+                              Foto Profil
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -563,15 +439,7 @@ const Warehouses = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-                            Pengguna Gudang belum tersedia
-========
-                            Sales army belum tersedia
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-                            Pengguna Gudang belum tersedia
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+                            Sales SPV army belum tersedia
                           </span>
                         </div>
                       </div>
@@ -581,31 +449,25 @@ const Warehouses = () => {
                       <thead className="bg-slate-200 dark:bg-slate-700">
                         <tr>
                           <th scope="col" className=" table-th ">
-<<<<<<< HEAD
-                            Kode Referral
-                          </th>
-                          <th scope="col" className=" table-th ">
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             Email
                           </th>
                           <th scope="col" className=" table-th ">
                             Nama
                           </th>
                           <th scope="col" className=" table-th ">
-                            Jenis Kelamin
-                          </th>
-                          <th scope="col" className=" table-th ">
                             No Telepon
                           </th>
                           <th scope="col" className=" table-th ">
-                            Tanggal Lahir
+                            Status Data
                           </th>
                           <th scope="col" className=" table-th ">
-                            Cabang SJM
+                            Status Akun
                           </th>
                           <th scope="col" className=" table-th ">
-                            Status
+                            Total Army
+                          </th>
+                          <th scope="col" className=" table-th ">
+                            Foto Profil
                           </th>
                           <th scope="col" className=" table-th ">
                             Aksi
@@ -615,76 +477,59 @@ const Warehouses = () => {
                       <tbody className="bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700">
                         {data?.data?.map((item, index) => (
                           <tr key={index}>
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-                            {item?.email ? (
-                              <td className="table-td">{item?.email}</td>
-========
-                            {item?.army_profile?.referral_code?.code ? (
-                              <td className="table-td">
-                                {item?.army_profile?.referral_code?.code}
-                              </td>
-                            ) : (
-                              <td className="table-td">-</td>
-                            )}
-
                             <td className="table-td">{item.email}</td>
 
-                            {item?.army_profile?.first_name ? (
+                            {item?.spv_army_profile?.first_name ? (
                               <td className="table-td">
-                                {item?.army_profile?.first_name}{" "}
-                                {item.army_profile?.last_name}
+                                {item?.spv_army_profile?.first_name}{" "}
+                                {item.spv_army_profile?.last_name}
                               </td>
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
-                            {item?.email ? (
-                              <td className="table-td">{item?.email}</td>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             ) : (
                               <td className="table-td">-</td>
                             )}
 
-                            {item?.profile?.first_name ? (
+                            {item?.spv_army_profile?.phone_number ? (
                               <td className="table-td">
-                                {item?.profile?.first_name}{" "}
-                                {item?.profile?.last_name}
+                                {item?.spv_army_profile?.phone_number}
                               </td>
                             ) : (
                               <td className="table-td">-</td>
                             )}
 
                             <td className="table-td">
-                              {item?.profile?.gender === "L"
-                                ? "Laki-Laki"
-                                : "Perempuan"}
+                              {item?.spv_army_profile?.approve_status ===
+                                "incomplete" && (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-blue-500 bg-blue-500">
+                                  Belum Registrasi
+                                </span>
+                              )}
+                              {item?.spv_army_profile?.approve_status ===
+                                "approved" && (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-500">
+                                  Verifikasi
+                                </span>
+                              )}
+                              {item?.spv_army_profile?.approve_status ===
+                                "review" && (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-warning-500 bg-warning-500">
+                                  Review
+                                </span>
+                              )}
+                              {item?.spv_army_profile?.approve_status ===
+                                "rejected" && (
+                                <Tooltip
+                                  // content={item?.spv_army_profile?.reject_note}
+                                  placement="top"
+                                  arrow
+                                  animation="shift-away"
+                                >
+                                  <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
+                                    Ditolak
+                                  </span>
+                                </Tooltip>
+                              )}
                             </td>
-
-                            {item?.profile?.phone_number ? (
-                              <td className="table-td">
-                                {item?.profile?.phone_number}
-                              </td>
-                            ) : (
-                              <td className="table-td">-</td>
-                            )}
-
-                            {item?.profile?.birth ? (
-                              <td className="table-td">
-                                {item?.profile?.birth}
-                              </td>
-                            ) : (
-                              <td className="table-td">-</td>
-                            )}
-
-                            {item?.site?.name ? (
-                              <td className="table-td">{item?.site?.name}</td>
-                            ) : (
-                              <td className="table-td">-</td>
-                            )}
-<<<<<<< HEAD
                             <td className="table-td">
-=======
-                            {/* <td className="table-td">
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                               {item?.is_active === true ? (
                                 <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-500">
                                   Aktif
@@ -694,25 +539,49 @@ const Warehouses = () => {
                                   Nonaktif
                                 </span>
                               )}
-<<<<<<< HEAD
-=======
-                            </td> */}
-
-                            <td className="table-td">
-                              <Switch
-                                label={item?.is_active ? "Aktif" : "Nonaktif"}
-                                activeClass="bg-success-500"
-                                value={item?.is_active}
-                                onChange={() => handleChangeStatus(item.uid)}
-                                badge
-                                prevIcon="heroicons-outline:check"
-                                nextIcon="heroicons-outline:x"
-                              />
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
                             </td>
-
+                            {item?.spv_army_profile?.armies_count ? (
+                              <td className="table-td">
+                                {item?.spv_army_profile?.armies_count} Army
+                              </td>
+                            ) : (
+                              <td className="table-td">-</td>
+                            )}
+                            <td className="table-td">
+                              {item?.spv_army_profile?.profile_picture?.url ? (
+                                <img
+                                  src={
+                                    item?.spv_army_profile?.profile_picture?.url
+                                  }
+                                  alt=""
+                                  className="w-16 h-16 object-cover rounded-full"
+                                />
+                              ) : (
+                                <img
+                                  src={ProfileImageMen}
+                                  alt=""
+                                  className="w-16 h-16 object-cover rounded-full"
+                                />
+                              )}
+                            </td>
                             <td className="table-td">
                               <div className="flex space-x-3 rtl:space-x-reverse">
+                                <Tooltip
+                                  content="Detail Sales"
+                                  placement="top"
+                                  arrow
+                                  animation="shift-away"
+                                >
+                                  <button
+                                    className="action-btn"
+                                    type="button"
+                                    onClick={() =>
+                                      navigate(`/spvarmy/detail/${item.uid}`)
+                                    }
+                                  >
+                                    <Icon icon="heroicons:eye" />
+                                  </button>
+                                </Tooltip>
                                 <Tooltip
                                   content="Hapus"
                                   placement="top"
@@ -793,12 +662,22 @@ const Warehouses = () => {
           </Card>
         </div>
         <div className="lg:col-span-4 col-span-12">
-<<<<<<< HEAD
-          <Card title={"Tambah Pengguna Gudang"}>
-=======
-          <Card title={"Tambah Admin Warehouse"}>
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+          <Card title={"Tambah SPV Army"}>
             <div className="text-sm text-slate-600 font-normal bg-white dark:bg-slate-900 dark:text-slate-300 rounded p-5">
+              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
+                <Textinput
+                  label="Email SPV Sales *"
+                  type="email"
+                  placeholder="email_name@domain.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                />
+                {error && (
+                  <span className="text-danger-600 text-xs py-2">
+                    {error.email}
+                  </span>
+                )}
+              </div>
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
                 <label htmlFor=" hh" className="form-label ">
                   Cabang SJM *
@@ -822,78 +701,12 @@ const Warehouses = () => {
                 )}
               </div>
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <Textinput
-                  label="Email Pengguna *"
-                  type="email"
-                  placeholder="email_name@domain.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                />
-                {error && (
-                  <span className="text-danger-600 text-xs py-2">
-                    {error.email}
-                  </span>
-                )}
-              </div>
-
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <Textinput
-                  label="Nama Depan *"
-                  type="text"
-                  placeholder="Masukkan nama depan pengguna"
-                  onChange={(e) => setFirstName(e.target.value)}
-                  value={first_name}
-                />
-                {error && (
-                  <span className="text-danger-600 text-xs py-2">
-                    {error.first_name}
-                  </span>
-                )}
-              </div>
-
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <Textinput
-                  label="Nama Belakang (Optional)"
-                  type="text"
-                  placeholder="Masukkan nama belakang pengguna"
-                  onChange={(e) => setLastName(e.target.value)}
-                  value={last_name}
-                />
-                {error && (
-                  <span className="text-danger-600 text-xs py-2">
-                    {error.last_name}
-                  </span>
-                )}
-              </div>
-
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <Textinput
-                  label="No Telepon (Optional)"
-                  type="number"
-                  placeholder="Masukkan no telepon pengguna ( 085 xxx xxx xxx )"
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  value={phone_number}
-                />
-                {error && (
-                  <span className="text-danger-600 text-xs py-2">
-                    {error.phone_number}
-                  </span>
-                )}
-              </div>
-
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
                 <label htmlFor=" hh" className="form-label ">
-                  Jenis Kelamin *
+                  Dealer SPV Sales *
                 </label>
                 <Select
                   className="react-select mt-2"
                   classNamePrefix="select"
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-                  placeholder="Pilih jenis kelamin..."
-                  value={gender}
-                  onChange={handleGenderChange}
-========
                   placeholder="Pilih dealer..."
                   options={dealer?.map((dealer) => ({
                     value: dealer?.uid,
@@ -903,72 +716,72 @@ const Warehouses = () => {
                     setSelectedDealer(selectedOption)
                   }
                   value={selectedDealer}
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
                   isClearable
-                  options={[
-                    { value: "Laki-Laki", label: "Laki-Laki" },
-                    { value: "Perempuan", label: "Perempuan" },
-=======
-                  placeholder="Pilih jenis kelamin..."
-                  value={gender}
-                  onChange={handleGenderChange}
-                  isClearable
-                  options={[
-                    { value: "L", label: "Laki-Laki" },
-                    { value: "P", label: "Perempuan" },
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-                  ]}
                 />
                 {error && (
                   <span className="text-danger-600 text-xs py-2">
-                    {error.gender}
-                  </span>
-                )}
-              </div>
-<<<<<<< HEAD
-<<<<<<<< HEAD:src/pages/MasterUser/MasterWarehouse/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
-
-              <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <Textinput
-                  label="Tanggal Lahir (Optional)"
-                  type="date"
-                  placeholder="Masukkan tanggal lahir pengguna ( 085 xxx xxx xxx )"
-                  onChange={(e) => setBirth(e.target.value)}
-                  value={birth}
-                />
-                {error && (
-                  <span className="text-danger-600 text-xs py-2">
-                    {error.birth}
+                    {error.dealer}
                   </span>
                 )}
               </div>
 
-<<<<<<< HEAD
-            
-========
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
-                <label htmlFor=" hh" className="form-label ">
-                  Pilih SPV (Optional)
-                </label>
-                <Select
-                  className="react-select mt-2"
-                  classNamePrefix="select"
-                  placeholder="Pilih SPV..."
-                  options={data_spv?.map((item) => ({
-                    value: item?.uid,
-                    // label: `${item?.email}`,
-                    label: `${item?.spv_army_profile?.first_name ? item.spv_army_profile.first_name + ' ' : ''}${item?.spv_army_profile?.last_name || '' || item?.email}`,
-                  }))}
-                  onChange={(selectedOption) => setSelectedSPV(selectedOption)}
-                  value={selectedSPV}
-                  isClearable
-                />
+                <div className="flex row justify-between items-center mb-2">
+                  <label htmlFor="hh" className="form-label">
+                    Pilih Sales Army *
+                  </label>
+                  <div className="flex row justify-end gap-2">
+                    <button
+                      type="button"
+                      className="action-btn"
+                      onClick={() => {
+                        addArmyInput();
+                      }}
+                    >
+                      <Icon icon="heroicons:plus" />
+                    </button>
+                  </div>
+                </div>
+
+                {army_select.map((armyInput, index) => (
+                  <div key={index} className="items-center mb-2">
+                    <div className="flex row justify-between items-center mb-2">
+                      <div className={index > 0 ? "w-full mr-2" : "w-full"}>
+                        <Select
+                          className="react-select mt-2"
+                          classNamePrefix="select"
+                          placeholder="Pilih army..."
+                          options={data_army?.map((item) => ({
+                            value: item?.uid,
+                            label: `${item?.army_profile?.first_name ? item.army_profile.first_name + ' ' : ''}${item?.army_profile?.last_name || '' || item?.email}`,
+                          }))}
+                          onChange={(selectedOptionArmy) =>
+                            updateArmyInput(index, selectedOptionArmy)
+                          }
+                          value={army_select[index]}
+                          isClearable
+                        />
+                      </div>
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="action-btn"
+                          onClick={() => removeArmyInput(index)}
+                        >
+                          <Icon icon="heroicons:trash" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {error && error.armyInput && error.armyInput[index] && (
+                  <span className="text-danger-600 text-xs py-2">
+                    {error.armyInput[index]}
+                  </span>
+                )}
               </div>
->>>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68:src/pages/MasterSales/SalesArmy/index.jsx
-=======
->>>>>>> 85b0d3345ec566df18bf6950584837d86b617c68
+
               <div className="grid justify-items-end">
                 <div className="grid xl:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-3 ">
                   <Button
@@ -993,4 +806,4 @@ const Warehouses = () => {
   );
 };
 
-export default Warehouses;
+export default SalesArmySPV;
