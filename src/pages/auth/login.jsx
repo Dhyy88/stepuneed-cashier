@@ -40,7 +40,7 @@ const login = () => {
                 </Link>
               </div>
               <div className="text-center 2xl:mb-10 mb-5">
-                <h4 className="font-medium">Warehouse Sumber Jaya Motor</h4>
+                <h4 className="font-medium">Kasir Sumber Jaya Motor</h4>
                 <div className="text-slate-500 dark:text-slate-400 text-base">
                   Silahkan melakukan autentikasi menggunakan email dan kata
                   sandi.

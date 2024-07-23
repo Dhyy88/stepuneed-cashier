@@ -10,44 +10,34 @@ export const menuItems = [
   //Menu Master Inventory
   {
     isHeadr: true,
-    title: "Master Data Gudang",
+    title: "Master Data",
   },
+
+
   {
-    title: "Master PO",
+    title: "Master DO",
     icon: "heroicons-outline:rectangle-group",
     link: "/app/home",
     child: [
       {
-        childtitle: "Data PO",
-        childlink: "/po",
+        childtitle: "Data DO",
+        childlink: "/do",
       },
       {
-        childtitle: "Penerimaan PO",
-        childlink: "/receivepo"
+        childtitle: "Data DO Retur",
+        childlink: "/doreturn"
+      },  
+      {
+        childtitle: "Data DO Sementara",
+        childlink: "/dotemp"
       },  
     ]
   },
 
   {
-    title: "Master Stok",
-    icon: "heroicons-outline:rectangle-group",
-    link: "/app/home",
-    child: [
-      {
-        childtitle: "Data Stok",
-        childlink: "/stock",
-      },
-      {
-        childtitle: "Stock Opname",
-        childlink: "/stockopname"
-      },  
-    ]
-  },
-
-  {
-    title: "Manual Stok",
-    icon: "heroicons-outline:rectangle-group",
-    link: "/manualstocks",
+    title: "Data Stok",
+    icon: "heroicons-outline:archive-box",
+    link: '/stocks'
   },
 
   // {

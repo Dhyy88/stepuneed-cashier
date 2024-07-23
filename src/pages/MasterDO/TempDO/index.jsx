@@ -9,9 +9,32 @@ import Swal from "sweetalert2";
 import Button from "@/components/ui/Button";
 import Loading from "../../../components/Loading";
 import { useNavigate } from "react-router-dom";
-import Product from "@/assets/images/logo/logopng.png";
+import Select from "react-select";
 
-const StockOpname = () => {
+const statusOptions = [
+  {
+    value: "",
+    label: "Semua Status",
+  },
+  {
+    value: "pending",
+    label: "Menunggu",
+  },
+  {
+    value: "approve",
+    label: "Disetujui",
+  },
+  {
+    value: "reject",
+    label: "Ditolak"
+  },
+  {
+    value: "return",
+    label: "Retur"
+  }
+];
+
+const DOTemp = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     data: [],
@@ -22,46 +45,32 @@ const StockOpname = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState([]);
+  const [status, setStatus] = useState(null);
 
   const [query, setQuery] = useState({
     search: "",
-    paginate: 8,
-    location: "",
     date: "",
+    status: "",
+    paginate: 5,
   });
 
-  async function getDataStock(query) {
+  async function getDO(query) {
     setIsLoading(true);
     try {
-      const response = await axios.post(ApiEndpoint.STOCKOPNAME, {
+      const response = await axios.post(ApiEndpoint.DO_TEMP, {
         page: query?.page,
         search: query?.search,
-        paginate: 8,
-        location: query?.location,
-        date: query?.date,
+        date: query?.data,
+        status: query?.status,
+        paginate: 10,
       });
       setData(response?.data?.data);
       setIsLoading(false);
-    } catch (err) {
-      setError(err);
+    } catch (error) {
+      setError(error);
       setIsLoading(false);
     }
   }
-
-  const getLocation = () => {
-    axios.get(ApiEndpoint.LOCATION_STOCK).then((response) => {
-      setLocation(response?.data);
-    });
-  };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    getDataStock(query);
-  }, [query]);
 
   const handlePrevPagination = () => {
     if (data.prev_page_url) {
@@ -99,25 +108,25 @@ const StockOpname = () => {
     return pageNumbers;
   };
 
+  useEffect(() => {
+    getDO(query);
+  }, [query]);
+
   return (
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-12 col-span-12">
-          <Card title="Stock Opname">
-            <div className="md:flex justify-between items-center mb-4">
-              <div className="md:flex items-center gap-3">
-                <div className="row-span-3 md:row-span-4">
-                  <Button
-                    text="Tambah Stock Opname"
-                    className="btn-primary dark w-full btn-sm "
-                    onClick={() => navigate(`/stockopname/create`)}
-                  />
-                </div>
-              </div>
-              <div className="md:flex items-center gap-3">
-                <div className="row-span-3 md:row-span-4">
+          <Card title="DO Sementara SJM">
+            <Card className="mb-5">
+              <div className="grid xl:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5 mb-4">
+                <div className="">
+                  <label htmlFor=" hh" className="form-label ">
+                    Tanggal DO
+                  </label>
                   <Textinput
+                    isClearable
                     type="date"
+                    className="py-2"
                     // value={query || ""}
                     onChange={(event) =>
                       setQuery({ ...query, date: event.target.value })
@@ -125,9 +134,49 @@ const StockOpname = () => {
                     placeholder="Cari tanggal SJM..."
                   />
                 </div>
+                <div className="">
+                  <label htmlFor=" hh" className="form-label ">
+                    Status
+                  </label>
+                  <div className="row-span-3 md:row-span-4 mb-2">
+                    <Select
+                      className="react-select w-full"
+                      classNamePrefix="select"
+                      placeholder="Pilih status..."
+                      options={statusOptions}
+                      onChange={(value) => {
+                        setQuery({ ...query, status: value?.value });
+                        setStatus(value);
+                      }}
+                      value={status}
+                      isClearable
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* </div> */}
+            </Card>
+            <div className="md:flex justify-between items-center mb-4">
+              <div className="md:flex items-center gap-3">
+                <div className="row-span-3 md:row-span-4">
+                  <Button
+                    text="Tambah DO Sementara"
+                    className="btn-primary dark w-full btn-sm mb-2 "
+                    onClick={() => navigate(`/dotemp/create`)}
+                  />
+                </div>
+              </div>
+              <div className="md:flex items-center gap-3">
+                <div className="row-span-3 md:row-span-4">
+                  <Textinput
+                    onChange={(event) =>
+                      setQuery({ ...query, search: event.target.value })
+                    }
+                    placeholder="Cari DO Sementara..."
+                  />
+                </div>
               </div>
             </div>
-
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
                 <div className="overflow-hidden ">
@@ -137,13 +186,16 @@ const StockOpname = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              Tanggal Laporan
+                              No DR
                             </th>
                             <th scope="col" className=" table-th ">
-                              Catatan
+                              Tanggal
                             </th>
                             <th scope="col" className=" table-th ">
-                              Laporan Dari
+                              Cabang
+                            </th>
+                            <th scope="col" className=" table-th ">
+                              Status
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -162,13 +214,16 @@ const StockOpname = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              Tanggal Laporan
+                              No DR
                             </th>
                             <th scope="col" className=" table-th ">
-                              Catatan
+                              Tanggal
                             </th>
                             <th scope="col" className=" table-th ">
-                              Laporan Dari
+                              Cabang
+                            </th>
+                            <th scope="col" className=" table-th ">
+                              Status
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -185,7 +240,7 @@ const StockOpname = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-                            Stock Opname belum tersedia
+                            DO Sementara belum tersedia
                           </span>
                         </div>
                       </div>
@@ -195,13 +250,16 @@ const StockOpname = () => {
                       <thead className="bg-slate-200 dark:bg-slate-700">
                         <tr>
                           <th scope="col" className=" table-th ">
-                            Tanggal Laporan
+                            No DR
                           </th>
                           <th scope="col" className=" table-th ">
-                            Catatan
+                            Tanggal
                           </th>
                           <th scope="col" className=" table-th ">
-                            Laporan Dari
+                            Cabang
+                          </th>
+                          <th scope="col" className=" table-th ">
+                            Status
                           </th>
                           <th scope="col" className=" table-th ">
                             Aksi
@@ -211,15 +269,24 @@ const StockOpname = () => {
                       <tbody className="bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700">
                         {data?.data?.map((item, index) => (
                           <tr key={index}>
-                            <td className="table-td">{item.reported_at}</td>
-                            <td className="table-td">{item?.note} </td>
                             <td className="table-td">
-                              {item?.report_by?.profile?.first_name}{" "}
-                              {item?.report_by?.profile?.last_name}{" "}
-                           
+                              {item?.document_number}
                             </td>
-                           
-
+                            <td className="table-td">{item?.date}</td>
+                            <td className="table-td">
+                              {item?.warehouse_site?.name}
+                            </td>
+                            <td className="table-td">
+                              {item?.is_return ? (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-300">
+                                  Disetujui
+                                </span>
+                              ) : (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
+                                  Menunggu
+                                </span>
+                              )}
+                            </td>
                             <td className="table-td">
                               <div className="flex space-x-3 rtl:space-x-reverse">
                                 <Tooltip
@@ -232,9 +299,7 @@ const StockOpname = () => {
                                     className="action-btn"
                                     type="button"
                                     onClick={() =>
-                                      navigate(
-                                        `/stockopname/detail/${item.uid}`
-                                      )
+                                      navigate(`/doreturn/detail/${item.uid}`)
                                     }
                                   >
                                     <Icon icon="heroicons:eye" />
@@ -247,58 +312,58 @@ const StockOpname = () => {
                       </tbody>
                     </table>
                   )}
-                </div>
-                <div className="custom-class flex justify-end mt-4">
-                  <ul className="pagination">
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleFirstPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-double-left" />
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handlePrevPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-left" />
-                      </button>
-                    </li>
-
-                    {generatePageNumbers().map((pageNumber) => (
-                      <li key={pageNumber.page}>
+                  <div className="custom-class flex justify-end mt-4">
+                    <ul className="pagination">
+                      <li>
                         <button
-                          className={`${
-                            pageNumber.active ? "active" : ""
-                          } page-link`}
-                          onClick={() =>
-                            setQuery({ ...query, page: pageNumber.page })
-                          }
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleFirstPagination}
                         >
-                          {pageNumber.page}
+                          <Icon icon="heroicons-outline:chevron-double-left" />
                         </button>
                       </li>
-                    ))}
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handlePrevPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-left" />
+                        </button>
+                      </li>
 
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleNextPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-right" />
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
-                        onClick={handleLastPagination}
-                      >
-                        <Icon icon="heroicons-outline:chevron-double-right" />
-                      </button>
-                    </li>
-                  </ul>
+                      {generatePageNumbers().map((pageNumber) => (
+                        <li key={pageNumber.page}>
+                          <button
+                            className={`${
+                              pageNumber.active ? "active" : ""
+                            } page-link`}
+                            onClick={() =>
+                              setQuery({ ...query, page: pageNumber.page })
+                            }
+                          >
+                            {pageNumber.page}
+                          </button>
+                        </li>
+                      ))}
+
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleNextPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-right" />
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="text-xl leading-4 text-slate-900 dark:text-white h-6  w-6 flex  items-center justify-center flex-col prev-next-btn "
+                          onClick={handleLastPagination}
+                        >
+                          <Icon icon="heroicons-outline:chevron-double-right" />
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -309,4 +374,4 @@ const StockOpname = () => {
   );
 };
 
-export default StockOpname;
+export default DOTemp;

@@ -1,49 +1,35 @@
 const ApiEndpoint = {
   // AUTH AREA
-    LOGIN: 'warehouse/auth/login',
-    LOGOUT: 'warehouse/auth/logout',
-    DETAIL: 'warehouse/account',
-    CHANGE_PASSWORD: 'warehouse/account/password/change',
+    LOGIN: 'cashier/auth/login',
+    LOGOUT: 'cashier/auth/logout',
+    DETAIL: 'cashier/account',
+    CHANGE_PASSWORD: 'cashier/account/password/change',
 
-  //STOCK OPNAME
-    STOCKOPNAME: "warehouse/stocks/opname",
-    RECEIVE_PO: "warehouse/purchase-order-receive",
-    PO_NUMBER: "warehouse/purchase-order-receive/purchase-order-detail",
+  // USER AREA
+    HO_APPROVE : "cashier/hos/can-approve-do",
+    CUSTOMER : "cashier/customers",
+    SALES_BY_SITE : "cashier/sales/by-site",
+    CAR_MODEL : "cashier/car-models",
+    APPROVAL_HO : "cashier/hos/can-approve-do",
 
-  // STOCK
-    STOCK: "warehouse/stocks",
-    LOCATION_STOCK: "warehouse/stocks/locations",
-    VARIANTS: "warehouse/variants",
-    MANUAL_STOCK: "warehouse/manual-stock-receive",
+  // DO AREA
+    DO : "cashier/delivery-orders/create-by-me",
+    DO_DETAIL: "cashier/delivery-orders",
+    CREATE_DO : "cashier/delivery-orders/create",
+    DO_RETURN : "cashier/do-returns/create-by-me",
+    CREATE_DO_RETURN : "cashier/do-returns/create",
+    DETAIL_DO_RETURN : "cashier/do-returns",
+    DO_TEMP : "cashier/temp-delivery-orders/create-by-me",
+    CREATE_DO_TEMP : "cashier/temp-delivery-orders/create",
 
-  //HO ACCOUNT
-    HO: 'ho/hos',
-    HO_CREATE: 'ho/hos/create',
-
-    //SITE AREA
-    SITES: 'ho/sites',
-    CREATE_SITES: 'ho/sites/create',
-    STORE_LIST: 'ho/sites/store',
-    WAREHOUSE_LIST: 'ho/sites/warehouse',
-    STORE_WH_LIST: 'ho/sites/store-warehouse',
-
-    //WAREHOUSE AREA
-    WAREHOUSE: 'ho/warehouses',
-    CREATE_WAREHOUSE: 'ho/warehouses/create',
-
-    //PRODCTS
-    PRODUCTS : 'ho/products',
-    VARIANT_GENERATOR: 'ho/products/variant-generator',
-    CREATE_PRODUCTS: 'ho/products/create',
-
-    //ADMINISTRATIVE AREA PUBLIC
+  //ADMINISTRATIVE AREA PUBLIC
     GET_PROVINCE: 'administrative-area/provinces',
     GET_CITIES: 'administrative-area/cities',
-
-    //PERMISSION AREA
-    GET_PERMISSION : 'ho/roles/permission-list',
-    ROLE : 'ho/roles',
-    POST_ROLES: 'ho/hos'
+    GET_WAREHOUSE : "cashier/sites/warehouse-by-city",
+    GET_PRODUCT_LIST : "cashier/products/variant-by-city",
+    GET_PRODUCT_BY_WH : "cashier/products/variant-by-warehouse-site",
+    GET_PRODUCT_BY_SITE : "cashier/products/variant-by-site",
+    STOCK_LIST_BY_WH : "cashier/delivery-orders/stock-by-warehouse-site",
   }
   
   export default ApiEndpoint

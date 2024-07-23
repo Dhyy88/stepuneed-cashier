@@ -12,21 +12,20 @@ import Textarea from "@/components/ui/Textarea";
 import { useNavigate } from "react-router-dom";
 import Alert from "@/components/ui/Alert";
 import LoadingButton from "../../../components/LoadingButton";
-import { useParams } from "react-router-dom";
-import { index } from "d3-array";
 
-const SetProduct = () => {
+const CreateDoTemp = () => {
   const navigate = useNavigate();
-  let { uid } = useParams();
 
   const [dataProduct, setDataProduct] = useState([]);
-  const [selectedVariantDetails, setSelectedVariantDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
+  const [document_number, setDocumentNumber] = useState("");
+
   const [variants, setVariants] = useState([""]);
-  const [alias, setAlias] = useState([""]);
-  const [price, setPrice] = useState([""]);
+  const [quantity, setQuantity] = useState([""]);
+
+  const [selectedVariantDetails, setSelectedVariantDetails] = useState([]);
 
   const previousPage = () => {
     navigate(-1);
@@ -34,70 +33,48 @@ const SetProduct = () => {
 
   const handleAddProduct = () => {
     setVariants([...variants, ""]);
-    setAlias([...alias, ""]);
-    setPrice([...price, ""]);
+    setQuantity([...quantity, ""]);
     setSelectedVariantDetails([...selectedVariantDetails, null]);
   };
 
   const handleRemoveProduct = (index) => {
     const updatedVariants = [...variants];
-    const updatedAlias = [...alias];
-    const updatedPrices = [...price];
+    const updatedQuantity = [...quantity];
     const updatedSelectedVariantDetails = [...selectedVariantDetails];
 
     updatedVariants.splice(index, 1);
-    updatedAlias.splice(index, 1);
-    updatedPrices.splice(index, 1);
+    updatedQuantity.splice(index, 1);
     updatedSelectedVariantDetails.splice(index, 1);
 
     setVariants(updatedVariants);
-    setAlias(updatedAlias);
-    setPrice(updatedPrices);
+    setQuantity(updatedQuantity);
     setSelectedVariantDetails(updatedSelectedVariantDetails);
   };
 
   const handleVariantChange = (value, index) => {
-    const updatedVariants = [...variants];
-    updatedVariants[index] = value.value;
-    setVariants(updatedVariants);
-
     const updatedSelectedVariantDetails = [...selectedVariantDetails];
     updatedSelectedVariantDetails[index] = value;
     setSelectedVariantDetails(updatedSelectedVariantDetails);
-    const selectedVariant = dataProduct.find(variant => variant.value === value.value);
-    if (selectedVariant) {
-      const updatedAlias = [...alias];
-      updatedAlias[index] = selectedVariant.alias;
-      setAlias(updatedAlias);
-    }
   };
 
-  const handleAliasChange = (value, index) => {
-    const updatedAlias = [...alias];
-    updatedAlias[index] = value;
-    setAlias(updatedAlias)
+  const handleQuantityChange = (value, index) => {
+    const updatedQuantity = [...quantity];
+    updatedQuantity[index] = value;
+    setQuantity(updatedQuantity);
   }
-
-  const handlePriceChange = (value, index) => {
-    const updatedPrices = [...price];
-    updatedPrices[index] = value;
-    setPrice(updatedPrices);
-  };
 
   const fetchVariants = async () => {
     try {
-      const response = await axios.get(ApiEndpoint.ALL_VARIANT);
+      const response = await axios.post(ApiEndpoint.GET_PRODUCT_BY_SITE);
       const formattedVariants = response?.data?.data
         ?.flatMap((dataProduct) => {
           if (!dataProduct.variants || dataProduct.variants.length === 0) {
             return dataProduct
               ? {
                   value: dataProduct.uid,
-                  label: `${dataProduct.product.name} - ${dataProduct.sku}`,
-                  alias: `${dataProduct.full_name}`,
-                  extra: `Rp ${dataProduct.price.toLocaleString(
-                    "id-ID"
-                  )}`,
+                  label: `${dataProduct.full_name}`,
+                  stock: `${dataProduct.stocks_count}`,
+                  extra: `${dataProduct.price}`,
                 }
               : null;
           } else {
@@ -107,12 +84,12 @@ const SetProduct = () => {
               dataProduct.variants.some(
                 (variant) => variant.uid === primaryVariantUid
               );
-  
+
             if (primaryVariantExistsInVariants) {
               return dataProduct.variants.map((variant) => ({
                 value: variant.uid,
-                label: `${dataProduct.product.name} - ${variant.sku}`,
-                alias: `${dataProduct.full_name}`,
+                label: `${dataProduct.product.name} `,
+                stock: `${dataProduct.stocks_count}`,
                 extra: `Rp. ${variant.price.toLocaleString("id-ID")}`,
               }));
             } else {
@@ -121,21 +98,21 @@ const SetProduct = () => {
                 ? [
                     {
                       value: primaryVariant.uid,
-                      label: `${dataProduct.product.name} - ${primaryVariant.sku}`,
-                     alias: `${dataProduct.full_name}`,
+                      label: `${dataProduct.product.name}`,
+                      stock: `${dataProduct.stocks_count}`,
                       extra: `Rp ${primaryVariant.price.toLocaleString(
                         "id-ID"
                       )}`,
                     },
                   ]
                 : [];
-  
+
               return [
                 ...primaryVariantData,
                 ...dataProduct.variants.map((variant) => ({
                   value: variant.uid,
-                  label: `${dataProduct.product.name} - ${variant.sku}`,
-                 alias: `${dataProduct.full_name}`,
+                  label: `${dataProduct.product.name}`,
+                  stock: `${dataProduct.stocks_count}`,
                   extra: `Rp ${variant.price.toLocaleString("id-ID")}`,
                 })),
               ];
@@ -143,21 +120,92 @@ const SetProduct = () => {
           }
         })
         .filter((variant) => variant !== null);
-  
+
       setDataProduct(formattedVariants);
     } catch (error) {
       console.error("Error fetching product variants:", error);
     }
   };
-  
+
   useEffect(() => {
-    fetchVariants();
+    // if (selected_warehouse_site) {
+      fetchVariants();
+    // }
   }, []);
-  
+
+  const getFilteredOptions = (index) => {
+    const selectedVariantIds = selectedVariantDetails
+      .filter((_, i) => i !== index)
+      .map((variant) => variant?.value);
+
+    return (dataProduct || []).filter(
+      (variant) => !selectedVariantIds.includes(variant.value)
+    );
+  };
+
+  const onSubmit = async (e) => {
+    setIsLoading(true);
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("document_number", document_number || "");
+
+    const updatedVariants = variants.map((variant, index) => ({
+      ...variant,
+      quantity: quantity[index] || "",
+      uid: selectedVariantDetails[index] || "",
+    }));
+
+    updatedVariants.forEach((variant, index) => {
+      formData.append(
+        `products[${index}][variant]`,
+        variant?.uid?.value || ""
+      );
+      formData.append(`products[${index}][quantity]`, variant?.quantity || "")
+    });
+
+    Swal.fire({
+      icon: "warning",
+      title: "Konfirmasi",
+      text: "Anda yakin data yang dimasukkan sudah benar?",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Tambahkan",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      setIsLoading(true);
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(
+            `${ApiEndpoint.CREATE_DO_TEMP}`,
+            formData
+          );
+          if (response.status === 200) {
+            Swal.fire("Berhasil", "DO sementara berhasil diterbitkan", "success");
+            setIsLoading(false);
+            navigate("/doreturn");
+          } else {
+            setValidation("Terjadi kesalahan saat mengirim data");
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Terjadi kesalahan saat mengirim data",
+            });
+            setIsLoading(false);
+          }
+        } catch (error) {
+          setError(error.response.data.errors);
+          Swal.fire("Gagal", "Terjadi kesalahan saat mengirim data", "error");
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    });
+  };
 
   const renderVariantInputs = (index) => (
     <div key={index}>
-      <div className="grid xl:grid-cols-3 md:grid-cols-4 grid-cols-1 gap-5 mb-4">
+      <div className="grid xl:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5 mb-4">
         <div className="">
           <label htmlFor={`variant_${index}`} className="form-label ">
             Pilih Produk *
@@ -167,36 +215,34 @@ const SetProduct = () => {
             className="react-select mt-2"
             classNamePrefix="select"
             placeholder="Pilih Produk..."
-            options={dataProduct}
+            options={getFilteredOptions(index)}
             value={selectedVariantDetails[index]}
             onChange={(value) => handleVariantChange(value, index)}
-          />
-        </div>
-        <div className="">
-          <Textinput
-            label="Nama Alias Produk *"
-            type="text"
-            placeholder="Tentukan alias produk"
-            value={alias[index]}
-            onChange={(e) => handleAliasChange(e.target.value, index)}
+            isClearable
           />
         </div>
         <div className="flex justify-between items-end space-x-5">
           <div className="flex-1">
             <Textinput
-              label="Harga Supplier (Optional)"
-              type="number"
-              placeholder="Tentukan nilai harga supplier"
-              value={price[index]}
-              onChange={(e) => handlePriceChange(e.target.value, index)}
+              label="Jumlah *"
+              type="text"
+              placeholder="Tentukan jumlah yang diinginkan"
+              value={quantity[index]}
+              onChange={(e) => handleQuantityChange(e.target.value, index)}
             />
           </div>
           <div className="flex-none relative">
             <button
-              className="inline-flex items-center justify-center h-10 w-10 bg-danger-500 text-lg border rounded border-danger-500 text-white"
+              className="inline-flex items-center justify-center h-10 w-10 bg-danger-500 text-lg border rounded border-danger-500 text-white mr-2"
               onClick={() => handleRemoveProduct(index)}
             >
               <Icon icon="heroicons:trash" />
+            </button>
+            <button
+              className="inline-flex items-center justify-center h-10 w-10 bg-primary-500 text-lg border rounded border-primary-500 text-white"
+              onClick={() => handleAddProduct(index)}
+            >
+              <Icon icon="heroicons:plus" />
             </button>
           </div>
         </div>
@@ -207,82 +253,31 @@ const SetProduct = () => {
           className="light-mode alert-success mb-5"
         >
           <div>
-            <p>Nama Produk : {selectedVariantDetails[index].label}</p>
-            <p>Harga Jual : {selectedVariantDetails[index].extra}</p>
+            <p>Produk: {selectedVariantDetails[index].full_name}</p>
+            <p>Harga Produk: {selectedVariantDetails[index].extra}</p>
+            <p>No seri: {selectedVariantDetails[index].serial_number}</p>
           </div>
         </Alert>
       )}
     </div>
   );
 
-  const onSubmit = async () => {
-    setIsLoading(true);
-    const confirmation = await Swal.fire({
-      title: "Konfirmasi",
-      text: "Apakah Anda yakin ingin pengaturan produk anda sudah benar?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: "Tidak",
-      reverseButtons: true,
-    });
-    setIsLoading(true);
-
-    if (confirmation.isConfirmed) {
-      try {
-        const formData = {
-          variants: variants.map((variant, index) => ({
-            uid: variant,
-            alias: alias[index],
-            price: price[index],
-          })),
-        };
-
-        await axios.post(`${ApiEndpoint.SUPPLIER}/${uid}/set-products`, formData);
-        Swal.fire("Berhasil!", "Produk berhasil diatur.", "success");
-        setIsLoading(false);
-        // navigate("/bundles");
-        previousPage()
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
-          Swal.fire("Error!", error.response.data.message, "error");
-          setError(error.response.data.errors);
-        } else {
-          setError("Terjadi kesalahan saat membuat Bundle.");
-        }
-        setIsLoading(false);
-      }
-    } else {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="lg:col-span-12 col-span-12">
-      <Card title={"Atur produk supplier"}>
-        {error &&
-          Object.values(error).map((errMsg, i) => (
-            <Alert
-              icon="heroicons-outline:exclamation"
-              className="light-mode alert-danger mb-5"
-            >
-              <span key={i} className="text-danger-600 text-xs py-2">
-                {errMsg}
-              </span>
-            </Alert>
-          ))}
-        <Card className="mb-4">
-          <div className="flex justify-end mb-2">
-            <Button
-              text="Tambah Produk"
-              className="btn-primary light"
-              onClick={handleAddProduct}
+      <Card title={"Tambah DO Sementara"}>
+        <Card className="mb-3">
+          <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
+            <Textinput
+              label="No DO sementara*"
+              type="text"
+              placeholder="Tentukan no DO sementara (DT-001)"
+              value={document_number}
+              onChange={(e) => setDocumentNumber(e.target.value)}
             />
           </div>
+        </Card>
+
+        <Card className="mb-4">
           {variants.map((item, index) => renderVariantInputs(index))}
         </Card>
 
@@ -305,4 +300,4 @@ const SetProduct = () => {
   );
 };
 
-export default SetProduct;
+export default CreateDoTemp;

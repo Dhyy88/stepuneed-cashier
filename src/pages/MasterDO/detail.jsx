@@ -1,34 +1,39 @@
 import React, { useEffect, useState, Fragment } from "react";
 import Card from "@/components/ui/Card";
 import Icon from "@/components/ui/Icon";
-import ApiEndpoint from "../../../API/Api_EndPoint";
-import axios from "../../../API/Axios";
+import ApiEndpoint from "../../API/Api_EndPoint";
+import axios from "../../API/Axios";
 import { useParams } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import Textinput from "@/components/ui/Textinput";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import LoadingButton from "../../../components/LoadingButton";
 import Alert from "@/components/ui/Alert";
 import { Modal } from "antd";
 import Select from "react-select";
-import Loading from "../../../components/Loading";
+import Loading from "../../components/Loading";
 import Tooltip from "@/components/ui/Tooltip";
 
 import image1 from "@/assets/images/all-img/widget-bg-1.png";
 
-const DetailSupplier = () => {
+const DetailDO = () => {
   let { uid } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [query, setQuery] = useState({
+    search: "",
+    product: [uid],
+    paginate: 1,
+  });
+
   const getDataById = () => {
     setIsLoading(true);
     try {
       if (uid) {
-        axios.get(`${ApiEndpoint.SUPPLIER}/${uid}`).then((response) => {
+        axios.get(`${ApiEndpoint.DO_DETAIL}/${uid}`).then((response) => {
           setData(response?.data?.data);
           setIsLoading(false);
         });
@@ -43,7 +48,7 @@ const DetailSupplier = () => {
     try {
       const result = await Swal.fire({
         icon: "question",
-        title: "Apakah Anda yakin ingin menghapus supplier ini?",
+        title: "Apakah Anda yakin ingin menghapus DO ini?",
         text: "Anda tidak akan dapat mengembalikannya!",
         showCancelButton: true,
         confirmButtonText: "Ya, Hapus",
@@ -67,15 +72,15 @@ const DetailSupplier = () => {
         });
 
         if (input && input.trim().toLowerCase() === "hapus") {
-          await axios.delete(`${ApiEndpoint.SUPPLIER}/${uid}`);
+          await axios.delete(`${ApiEndpoint.DO_DETAIL}/${uid}`);
           Swal.fire(
             "Berhasil!",
-            "Anda berhasil menghapus data supplier ini.",
+            "Anda berhasil menghapus data DO ini.",
             "success"
           );
-          navigate(`/suppliers`);
+          navigate(`/do`);
         } else {
-          Swal.fire("Batal", "Hapus data supplier dibatalkan.", "info");
+          Swal.fire("Batal", "Hapus data DO dibatalkan.", "info");
         }
       }
     } catch (err) {
@@ -106,7 +111,7 @@ const DetailSupplier = () => {
 
         <div className="grid grid-cols-12 gap-6 ">
           <div className="lg:col-span-4 col-span-12">
-            <Card title="Info Supplier" className="mb-4">
+            <Card title="Info DO" className="mb-4">
               <ul className="list space-y-8">
                 <li className="flex space-x-3 rtl:space-x-reverse">
                   <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
@@ -114,27 +119,70 @@ const DetailSupplier = () => {
                   </div>
                   <div className="flex-1">
                     <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      Kode Supplier
+                      No DO
                     </div>
-                    {data?.code ? (
-                      <>{data?.code}</>
+                    {data?.document_number ? (
+                      <>{data?.document_number}</>
                     ) : (
-                      <span>Kode supplier belum diatur</span>
+                      <span>-</span>
                     )}
                   </div>
 
                   <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
-                    <Icon icon="heroicons:device-phone-mobile" />
+                    <Icon icon="heroicons:calendar" />
                   </div>
                   <div className="flex-1">
                     <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      No Telepon
+                      Tanggal
                     </div>
                     <div className="text-base text-slate-600 dark:text-slate-50">
-                      {data?.phone_number ? (
-                        <>{data?.phone_number}</>
+                      {data?.date ? <>{data?.date}</> : <span>-</span>}
+                    </div>
+                  </div>
+                </li>
+
+                <li className="flex space-x-3 rtl:space-x-reverse">
+                  <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
+                    <Icon icon="heroicons:arrow-down-on-square-stack" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
+                    Proses Do
+                    </div>
+                    <div className="text-base text-slate-600 dark:text-slate-50">
+                      {data?.is_processed ? (
+                        <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-300">
+                          Diproses
+                        </span>
                       ) : (
-                        <span>No Telepon belum diatur</span>
+                        <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
+                          Menunggu
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
+                    <Icon icon="heroicons:check-badge" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
+                      Status DO
+                    </div>
+                    <div className="text-base text-slate-600 dark:text-slate-50">
+                      {data?.status === "pending" && (
+                        <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-blue-500 bg-blue-500">
+                          Menunggu
+                        </span>
+                      )}
+                      {data?.status === "approve" && (
+                        <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-warning-500 bg-warning-300">
+                          Diterima
+                        </span>
+                      )}
+                      {data?.status === "reject" && (
+                        <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-500">
+                          Ditolak
+                        </span>
                       )}
                     </div>
                   </div>
@@ -146,30 +194,36 @@ const DetailSupplier = () => {
                   </div>
                   <div className="flex-1">
                     <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      Nama Rekening
+                      Nama Pelanggan
                     </div>
                     <div className="text-base text-slate-600 dark:text-slate-50">
-                      {data?.bank_account_name ? (
-                        <>{data?.bank_account_name}</>
+                      {data?.customer_profile?.first_name ? (
+                        <>
+                          {data?.customer_profile?.first_name}{" "}
+                          {data?.customer_profile?.last_name || ""}
+                        </>
                       ) : (
-                        <span>Nama bank belum diatur</span>
+                        <span>-</span>
                       )}
                     </div>
                   </div>
                   <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
-                    <Icon icon="heroicons:credit-card" />
+                    <Icon icon="heroicons:truck" />
                   </div>
                   <div className="flex-1">
                     <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      No Rekening
+                      Mobil Pelanggan
                     </div>
                     <div className="text-base text-slate-600 dark:text-slate-50">
-                      {data?.bank_account_number ? (
+                      {data?.customer_car?.model ? (
                         <>
-                          {data?.bank_account_number} {data?.bank}
+                          {data?.customer_car?.car_brand?.brand}{" "}
+                          {data?.customer_car?.model || ""}{" "}
+                          {data?.customer_car?.type || ""}
+                          {data?.customer_car?.year || ""}
                         </>
                       ) : (
-                        <span>Rekening belum diatur</span>
+                        <span>-</span>
                       )}
                     </div>
                   </div>
@@ -177,32 +231,57 @@ const DetailSupplier = () => {
 
                 <li className="flex space-x-3 rtl:space-x-reverse">
                   <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
-                    <Icon icon="heroicons:map-pin" />
+                    <Icon icon="heroicons:building-office-2" />
                   </div>
                   <div className="flex-1">
                     <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      Provinsi / Kota
+                      Cabang / Gudang
                     </div>
-                    {data?.province?.name ? (
-                      <>
-                        {data?.province?.name} / {data?.city?.name}
-                      </>
-                    ) : (
-                      <span>Provinsi kota belum diatur </span>
-                    )}
+                    <div className="text-base text-slate-600 dark:text-slate-50">
+                      {data?.warehouse_site?.name ? (
+                        <>{data?.warehouse_site?.name}</>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
-                    <Icon icon="heroicons:rectangle-group" />
+                    <Icon icon="heroicons:user-circle" />
                   </div>
                   <div className="flex-1">
-                    <div className="uppercase text-xs text-slate-500 dark:text-slate-300 mb-1 leading-[12px]">
-                      Total Produk
+                    <div className="uppercase text-xs text- slate-500 dark:text-slate-300 mb-1 leading-[12px]">
+                      Sales
                     </div>
-                    {data?.product_count ? (
-                      <>{data?.product_count}</>
-                    ) : (
-                      <span>Produk belum tersedia </span>
-                    )}
+                    <div className="text-base text-slate-600 dark:text-slate-50">
+                      {data?.sales?.profile?.first_name ? (
+                        <>
+                          {data?.sales?.profile?.first_name}{" "}
+                          {data?.sales?.profile?.last_name || ""}
+                        </>
+                      ) : (
+                        <span>{data?.sales?.email}</span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+                <li className="flex space-x-3 rtl:space-x-reverse">
+                  <div className="flex-none text-2xl text-slate-600 dark:text-slate-300">
+                    <Icon icon="heroicons:shield-check" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="uppercase text-xs text- slate-500 dark:text-slate-300 mb-1 leading-[12px]">
+                      Disetujui Oleh
+                    </div>
+                    <div className="text-base text-slate-600 dark:text-slate-50">
+                      {data?.approve_by?.profile?.first_name ? (
+                        <>
+                          {data?.approve_by?.profile?.first_name}{" "}
+                          {data?.approve_by?.profile?.last_name || ""}
+                        </>
+                      ) : (
+                        <span>{data?.approve_by?.email || "-"}</span>
+                      )}
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -217,38 +296,18 @@ const DetailSupplier = () => {
                 </h6>
               </header>
               <div className="py-3 px-5">
-                <div className="card-title2 mb-2">Perbaharui Supplier</div>
+                <div className="card-title2 mb-2">Hapus DO</div>
                 <div className="flex row justfiy-between gap-2">
                   <div className="flex-1">
                     <div className="text-sm">
-                      Harap memperhatikan kembali data dari supplier yang ingin
-                      diperbaharui.
-                    </div>
-                  </div>
-                  <div className="w-32">
-                    <div className="">
-                      <Button
-                        text="Perbaharui Supplier"
-                        className="btn-warning dark w-full btn-sm "
-                        onClick={() => navigate(`/supplier/update/${uid}`)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="py-3 px-5">
-                <div className="card-title2 mb-2">Hapus Supplier</div>
-                <div className="flex row justfiy-between gap-2">
-                  <div className="flex-1">
-                    <div className="text-sm">
-                      Setelah anda menghapus supplier, tidak ada akses untuk
+                      Setelah anda menghapus DO, tidak ada akses untuk
                       mengembalikan data. Harap mempertimbangkannya kembali.
                     </div>
                   </div>
                   <div className="w-32">
                     <div className="">
                       <Button
-                        text="Hapus Supplier"
+                        text="Hapus DO"
                         className="btn-danger dark w-full btn-sm "
                         onClick={() => onDelete(uid)}
                       />
@@ -260,15 +319,8 @@ const DetailSupplier = () => {
           </div>
 
           <div className="lg:col-span-8 col-span-12">
-            <Card title="Info Produk" className="mb-4">
+            <Card title="Info Produk DO" className="mb-4">
               <div className="py-4 px-6">
-                <div className="flex justify-end mb-4">
-                  <Button
-                    text="Atur Produk Supplier"
-                    className=" btn-primary light"
-                    onClick={() => navigate(`/supplier/product/${uid}`)}
-                  />
-                </div>
                 <div className="">
                   {isLoading ? (
                     <>
@@ -282,13 +334,13 @@ const DetailSupplier = () => {
                               Nama Produk
                             </th>
                             <th scope="col" className=" table-th ">
-                              Alias Produk
+                              Harga Produk
                             </th>
                             <th scope="col" className=" table-th ">
-                              Harga Jual
+                              Model Mobil
                             </th>
                             <th scope="col" className=" table-th ">
-                              Harga Supplier
+                              Jumlah
                             </th>
                           </tr>
                         </thead>
@@ -298,7 +350,7 @@ const DetailSupplier = () => {
                         <Loading />
                       </div>
                     </>
-                  ) : data?.products?.length === 0 ? (
+                  ) : data?.delivery_order_products?.length === 0 ? (
                     <>
                       <table className="min-w-full divide-y divide-slate-100 table-fixed dark:divide-slate-700">
                         <thead className="bg-slate-200 dark:bg-slate-700">
@@ -310,13 +362,13 @@ const DetailSupplier = () => {
                               Nama Produk
                             </th>
                             <th scope="col" className=" table-th ">
-                              Alias Produk
+                              Harga Produk
                             </th>
                             <th scope="col" className=" table-th ">
-                              Harga Jual
+                              Model Mobil
                             </th>
                             <th scope="col" className=" table-th ">
-                              Harga Supplier
+                              Jumlah
                             </th>
                           </tr>
                         </thead>
@@ -346,30 +398,37 @@ const DetailSupplier = () => {
                             Nama Produk
                           </th>
                           <th scope="col" className=" table-th ">
-                            Alias Produk
+                            Harga Produk
                           </th>
                           <th scope="col" className=" table-th ">
-                            Harga Jual
+                            Model Mobil
                           </th>
                           <th scope="col" className=" table-th ">
-                            Harga Supplier
+                            Jumlah
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700">
-                        {data?.variants?.map((item, index) => (
+                        {data?.delivery_order_products?.map((item, index) => (
                           <tr key={index}>
-                            <td className="table-td">{item?.sku}</td>
-                            <td className="table-td">{item?.product?.name}</td>
+                            <td className="table-td">{item?.variant?.sku}</td>
                             <td className="table-td">
-                              {item?.detail?.product_name_alias}
+                              {item?.variant?.full_name}
                             </td>
                             <td className="table-td">
-                              Rp {item?.price.toLocaleString("id-ID")}
+                              {item?.variant?.price ? (
+                                <span>
+                                  Rp{" "}
+                                  {item?.variant?.price.toLocaleString("id-ID")}
+                                </span>
+                              ) : (
+                                <span>-</span>
+                              )}
                             </td>
                             <td className="table-td">
-                              Rp {item?.detail?.price.toLocaleString("id-ID")}
+                              {item?.variant?.car_model?.full_name}
                             </td>
+                            <td className="table-td">{item?.quantity}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -385,4 +444,4 @@ const DetailSupplier = () => {
   );
 };
 
-export default DetailSupplier;
+export default DetailDO;

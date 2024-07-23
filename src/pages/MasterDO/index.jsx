@@ -13,24 +13,16 @@ import Select from "react-select";
 
 const statusOptions = [
   {
-    value: "draft",
-    label: "Diarsipkan",
+    value: "",
+    label: "Semua Status",
   },
   {
     value: "pending",
     label: "Menunggu Persetujuan",
   },
   {
-    value: "open",
+    value: "approve",
     label: "Disetujui",
-  },
-  {
-    value: "close",
-    label: "Selesai",
-  },
-  {
-    value: "cancel",
-    label: "Dibatalkan",
   },
   {
     value: "reject",
@@ -38,7 +30,7 @@ const statusOptions = [
   },
 ];
 
-const PurchaseOrderByMe = () => {
+const DO = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     data: [],
@@ -49,38 +41,29 @@ const PurchaseOrderByMe = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [warehouse_site, setDataWH] = useState(null);
 
-  const [site, setSite] = useState(null);
-  const [data_supplier, setDataSupplier] = useState(null);
-
-  const [selectedSite, setSelectedSite] = useState(null);
-  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [selected_wh, setSelectedWh] = useState(null);
   const [status, setStatus] = useState(null);
 
   const [query, setQuery] = useState({
     search: "",
-    supplier: "",
-    site: "",
-    request_by: "",
-    approve_by: "",
-    document_date: "",
+    warehouse_site: "",
+    date: "",
     status: "",
     paginate: 5,
   });
 
-  async function getPO(query) {
+  async function getDO(query) {
     setIsLoading(true);
     try {
-      const response = await axios.post(ApiEndpoint.PO_BY_ME, {
+      const response = await axios.post(ApiEndpoint.DO, {
         page: query?.page,
         search: query?.search,
-        supplier: query?.supplier,
-        site: query?.site,
-        request_by: query?.request_by,
-        approve_by: query?.approve_by,
-        document_date: query?.document_date,
+        warehouse_site: query?.warehouse_site,
+        date: query?.data,
         status: query?.status,
-        paginate: 5,
+        paginate: 10,
       });
       setData(response?.data?.data);
       setIsLoading(false);
@@ -90,25 +73,10 @@ const PurchaseOrderByMe = () => {
     }
   }
 
-  const getSupplier = () => {
-    axios.get(ApiEndpoint.SUPPLIER).then((response) => {
-      setDataSupplier(response?.data?.data);
+  const getWarehouse = () => {
+    axios.get(ApiEndpoint.GET_WAREHOUSE).then((response) => {
+      setDataWH(response?.data?.data);
     });
-  };
-
-  const getSite = async () => {
-    try {
-      const store_response = await axios.get(ApiEndpoint.STORE_LIST);
-      const whstore_response = await axios.get(ApiEndpoint.STORE_WH_LIST);
-      const site_response = [
-        ...store_response?.data?.data,
-        ...whstore_response?.data?.data,
-      ];
-
-      setSite(site_response);
-    } catch (error) {
-      Swal.fire("Gagal", error.response.data.message, "error");
-    }
   };
 
   const handlePrevPagination = () => {
@@ -148,85 +116,98 @@ const PurchaseOrderByMe = () => {
   };
 
   useEffect(() => {
-    getPO(query);
+    getDO(query);
   }, [query]);
 
   useEffect(() => {
-    getSite();
-    getSupplier();
+    getWarehouse();
   }, []);
 
   return (
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-12 col-span-12">
-          <Card title="Permintaan PO">
-            <div className="md:flex justify-end items-center mb-4">
+          <Card title="DO SJM">
+            <Card className="mb-5">
+              <div className="grid xl:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-5 mb-4">
+                <div className="">
+                  <label htmlFor=" hh" className="form-label ">
+                    Filter Gudang
+                  </label>
+                  <Select
+                    className="react-select  w-full"
+                    classNamePrefix="select"
+                    placeholder="Pilih gudang..."
+                    options={[
+                      { value: "", label: "Semua Gudang" },
+                      ...(warehouse_site?.map((item) => ({
+                        value: item.uid,
+                        label: item.name,
+                      })) || []),
+                    ]}
+                    onChange={(value) => {
+                      setQuery({ ...query, warehouse_site: value?.value });
+                      setSelectedWh(value);
+                    }}
+                    value={selected_wh}
+                    showSearch
+                    isClearable
+                  />
+                </div>
+                <div className="">
+                  <label htmlFor=" hh" className="form-label ">
+                    Tanggal DO
+                  </label>
+                  <Textinput
+                    isClearable
+                    type="date"
+                    className="py-2"
+                    // value={query || ""}
+                    onChange={(event) =>
+                      setQuery({ ...query, date: event.target.value })
+                    }
+                    placeholder="Cari tanggal SJM..."
+                  />
+                </div>
+                <div className="">
+                  <label htmlFor=" hh" className="form-label ">
+                    Status
+                  </label>
+                  <div className="row-span-3 md:row-span-4 mb-2">
+                    <Select
+                      className="react-select w-full"
+                      classNamePrefix="select"
+                      placeholder="Pilih status..."
+                      options={statusOptions}
+                      onChange={(value) => {
+                        setQuery({ ...query, status: value?.value });
+                        setStatus(value);
+                      }}
+                      value={status}
+                      isClearable
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* </div> */}
+            </Card>
+            <div className="md:flex justify-between items-center mb-4">
               <div className="md:flex items-center gap-3">
-                <div className="row-span-3 md-row-span-4 w-48">
-                  <Select
-                    className="react-select py-2 w-full"
-                    classNamePrefix="select"
-                    placeholder="Pilih Status..."
-                    options={statusOptions}
-                    onChange={(value) => {
-                      setQuery({ ...query, status: value?.value });
-                      setStatus(value);
-                    }}
-                    value={status}
-                    isClearable
+                <div className="row-span-3 md:row-span-4">
+                  <Button
+                    text="Tambah DO"
+                    className="btn-primary dark w-full btn-sm mb-2 "
+                    onClick={() => navigate(`/do/create`)}
                   />
                 </div>
-                <div className="row-span-3 md:row-span-4 w-48">
-                  <Select
-                    className="react-select py-2 w-full"
-                    classNamePrefix="select"
-                    placeholder="Pilih cabang..."
-                    options={[
-                      { value: "", label: "Semua Cabang" },
-                      ...(site?.map((item) => ({
-                        value: item.uid,
-                        label: item.name,
-                      })) || []),
-                    ]}
-                    onChange={(value) => {
-                      setQuery({ ...query, site: value?.value });
-                      setSelectedSite(value);
-                    }}
-                    value={selectedSite}
-                    showSearch
-                    isClearable
-                  />
-                </div>
-
-                <div className="row-span-3 md:row-span-4 w-48">
-                  <Select
-                    className="react-select py-2 w-full"
-                    classNamePrefix="select"
-                    placeholder="Pilih supplier..."
-                    options={[
-                      { value: "", label: "Semua Supplier" },
-                      ...(data_supplier?.map((item) => ({
-                        value: item.uid,
-                        label: item.name,
-                      })) || []),
-                    ]}
-                    onChange={(value) => {
-                      setQuery({ ...query, supplier: value?.value });
-                      setSelectedSupplier(value);
-                    }}
-                    value={selectedSupplier}
-                    showSearch
-                    isClearable
-                  />
-                </div>
-
+              </div>
+              <div className="md:flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4">
                   <Textinput
                     onChange={(event) =>
                       setQuery({ ...query, search: event.target.value })
                     }
-                    placeholder="Cari no berkas..."
+                    placeholder="Cari DO..."
                   />
                 </div>
               </div>
@@ -240,28 +221,22 @@ const PurchaseOrderByMe = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              No Berkas
+                              No DO
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Penerbitan
+                              Tanggal
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Penerimaan
+                              Cabang
                             </th>
                             <th scope="col" className=" table-th ">
-                              Penerima
+                              Nama Pelanggan
                             </th>
                             <th scope="col" className=" table-th ">
-                              Supplier
+                              Mobil Pelanggan
                             </th>
                             <th scope="col" className=" table-th ">
-                              Biaya
-                            </th>
-                            <th scope="col" className=" table-th ">
-                              Status PO
-                            </th>
-                            <th scope="col" className=" table-th ">
-                              Status Ketersediaan
+                              Status
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -280,28 +255,22 @@ const PurchaseOrderByMe = () => {
                         <thead className="bg-slate-200 dark:bg-slate-700">
                           <tr>
                             <th scope="col" className=" table-th ">
-                              No Berkas
+                              No DO
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Penerbitan
+                              Tanggal
                             </th>
                             <th scope="col" className=" table-th ">
-                              Tanggal Penerimaan
+                              Cabang
                             </th>
                             <th scope="col" className=" table-th ">
-                              Penerima
+                              Nama Pelanggan
                             </th>
                             <th scope="col" className=" table-th ">
-                              Supplier
+                              Mobil Pelanggan
                             </th>
                             <th scope="col" className=" table-th ">
-                              Biaya
-                            </th>
-                            <th scope="col" className=" table-th ">
-                              Status PO
-                            </th>
-                            <th scope="col" className=" table-th ">
-                              Status Ketersediaan
+                              Status
                             </th>
                             <th scope="col" className=" table-th ">
                               Aksi
@@ -318,7 +287,7 @@ const PurchaseOrderByMe = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-                            Berkas PO belum tersedia
+                            DO belum tersedia
                           </span>
                         </div>
                       </div>
@@ -328,28 +297,22 @@ const PurchaseOrderByMe = () => {
                       <thead className="bg-slate-200 dark:bg-slate-700">
                         <tr>
                           <th scope="col" className=" table-th ">
-                            No Berkas
+                            No DO
                           </th>
                           <th scope="col" className=" table-th ">
-                            Tanggal Penerbitan
+                            Tanggal
                           </th>
                           <th scope="col" className=" table-th ">
-                            Tanggal Penerimaan
+                            Cabang
                           </th>
                           <th scope="col" className=" table-th ">
-                            Penerima
+                            Nama Pelanggan
                           </th>
                           <th scope="col" className=" table-th ">
-                            Supplier
+                            Mobil Pelanggan
                           </th>
                           <th scope="col" className=" table-th ">
-                            Biaya
-                          </th>
-                          <th scope="col" className=" table-th ">
-                            Status PO
-                          </th>
-                          <th scope="col" className=" table-th ">
-                            Status Ketersediaan
+                            Status
                           </th>
                           <th scope="col" className=" table-th ">
                             Aksi
@@ -362,57 +325,24 @@ const PurchaseOrderByMe = () => {
                             <td className="table-td">
                               {item?.document_number}
                             </td>
-                            <td className="table-td">{item?.document_date}</td>
-                            <td className="table-td">{item?.delivery_date}</td>
+                            <td className="table-td">{item?.date}</td>
+                            <td className="table-td">{item?.warehouse_site?.name}</td>
+                            <td className="table-td">{item?.customer_profile?.first_name} {item?.customer_profile?.last_name || ""}</td>
+                            <td className="table-td">{item?.customer_car?.car_brand?.brand} {item?.customer_car?.model || ""}</td>
                             <td className="table-td">
-                              {item?.delivery_to_site_name}
-                            </td>
-                            <td className="table-td">{item?.supplier?.name}</td>
-                            <td className="table-td">
-                              {" "}
-                              Rp {item?.cost.toLocaleString("id-ID")}
-                            </td>
-
-                            <td className="table-td">
-                              {item?.status === "draft" && (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-blue-500 bg-blue-500">
-                                  Diarsip
-                                </span>
-                              )}
                               {item?.status === "pending" && (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-warning-500 bg-warning-300">
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-warning-500 bg-warning-500">
                                   Menunggu Persetujuan
                                 </span>
                               )}
-                              {item?.status === "open" && (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-500">
+                              {item?.status === "approve" && (
+                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-300">
                                   Disetujui
-                                </span>
-                              )}
-                              {item?.status === "close" && (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-pink-500 bg-pink-500">
-                                  Selesai
-                                </span>
-                              )}
-                              {item?.status === "cancel" && (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-amber-500 bg-amber-500">
-                                  Dibatalkan
                                 </span>
                               )}
                               {item?.status === "reject" && (
                                 <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
                                   Ditolak
-                                </span>
-                              )}
-                            </td>
-                            <td className="table-td">
-                              {item?.is_partial_receive ? (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-success-500 bg-success-300">
-                                  Tersedia
-                                </span>
-                              ) : (
-                                <span className="inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-danger-500 bg-danger-500">
-                                  Tidak Tersedia
                                 </span>
                               )}
                             </td>
@@ -428,7 +358,7 @@ const PurchaseOrderByMe = () => {
                                     className="action-btn"
                                     type="button"
                                     onClick={() =>
-                                      navigate(`/po/detail/${item.uid}`)
+                                      navigate(`/do/detail/${item.uid}`)
                                     }
                                   >
                                     <Icon icon="heroicons:eye" />
@@ -503,4 +433,4 @@ const PurchaseOrderByMe = () => {
   );
 };
 
-export default PurchaseOrderByMe;
+export default DO;
