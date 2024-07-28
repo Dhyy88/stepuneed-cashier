@@ -38,7 +38,7 @@ const Navmenu = ({ menus }) => {
         }
       }
     });
-    document.title = `SJM  | ${locationName}`;
+    document.title = `StepUneed  | ${locationName}`;
 
     setActiveSubmenu(submenuIndex);
     dispatch(toggleActiveChat(false));

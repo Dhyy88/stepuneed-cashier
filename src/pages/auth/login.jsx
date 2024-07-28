@@ -24,7 +24,7 @@ const login = () => {
           <div className="left-columns lg:w-1/2 lg:block hidden">
             <div className="logo-box-3">
               <Link to="/" className="">
-                <img src={LogoLogin} className="h-[100px]" alt="" />
+                <img src={LogoLogin} className="h-[300px]" alt="" />
               </Link>
             </div>
           </div>
@@ -40,10 +40,9 @@ const login = () => {
                 </Link>
               </div>
               <div className="text-center 2xl:mb-10 mb-5">
-                <h4 className="font-medium">Kasir Sumber Jaya Motor</h4>
+                <h4 className="font-medium">Kasir StepUneed</h4>
                 <div className="text-slate-500 dark:text-slate-400 text-base">
-                  Silahkan melakukan autentikasi menggunakan email dan kata
-                  sandi.
+                  Silahkan melakukan autentikasi menggunakan email dan kata sandi.
                 </div>
               </div>
               <LoginForm />

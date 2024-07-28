@@ -116,7 +116,7 @@ const DOTemp = () => {
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-12 col-span-12">
-          <Card title="DO Sementara SJM">
+          <Card title="DO Sementara">
             <Card className="mb-5">
               <div className="grid xl:grid-cols-2 md:grid-cols-2 grid-cols-1 gap-5 mb-4">
                 <div className="">
@@ -131,7 +131,7 @@ const DOTemp = () => {
                     onChange={(event) =>
                       setQuery({ ...query, date: event.target.value })
                     }
-                    placeholder="Cari tanggal SJM..."
+                    placeholder="Cari tanggal..."
                   />
                 </div>
                 <div className="">

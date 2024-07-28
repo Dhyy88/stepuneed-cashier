@@ -124,7 +124,7 @@ const DOReturn = () => {
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-12 col-span-12">
-          <Card title="DO Retur SJM">
+          <Card title="DO Retur">
             <Card className="mb-5">
               <div className="grid xl:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-5 mb-4">
                 <div className="">
@@ -163,7 +163,7 @@ const DOReturn = () => {
                     onChange={(event) =>
                       setQuery({ ...query, date: event.target.value })
                     }
-                    placeholder="Cari tanggal SJM..."
+                    placeholder="Cari tanggal..."
                   />
                 </div>
                 <div className="">

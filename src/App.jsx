@@ -26,6 +26,10 @@ const DetailDOReturn = lazy(() => import("./pages/MasterDO/DOReturn/detail"));
 const DOTemp = lazy(() => import("./pages/MasterDO/TempDO"));
 const CreateDoTemp = lazy(() => import("./pages/MasterDO/TempDO/create"));
 
+// Temp DO
+const Product = lazy(() => import("./pages/Product"));
+const Order = lazy(() => import("./pages/Order"));
+
 // Master Account Setting
 const Profiles = lazy(() => import("./pages/MasterUser/MasterAccount")); 
 const ProfileSetting = lazy(() => import("./pages/MasterUser/MasterAccount/profile_setting"));
@@ -58,6 +62,10 @@ function App() {
               {/* Route DO Temp */}
               <Route path="dotemp" element={<DOTemp />} />
               <Route path="dotemp/create" element={<CreateDoTemp />} />
+
+              {/* Route Master */}
+              <Route path="product" element={<Product />} />
+              <Route path="order" element={<Order />} />
               
               {/* Route User */}
               <Route path="profile" element={<Profiles />} />

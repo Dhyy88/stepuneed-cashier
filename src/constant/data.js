@@ -14,30 +14,30 @@ export const menuItems = [
   },
 
 
-  {
-    title: "Master DO",
-    icon: "heroicons-outline:rectangle-group",
-    link: "/app/home",
-    child: [
-      {
-        childtitle: "Data DO",
-        childlink: "/do",
-      },
-      {
-        childtitle: "Data DO Retur",
-        childlink: "/doreturn"
-      },  
-      {
-        childtitle: "Data DO Sementara",
-        childlink: "/dotemp"
-      },  
-    ]
-  },
+  // {
+  //   title: "Master DO",
+  //   icon: "heroicons-outline:rectangle-group",
+  //   link: "/app/home",
+  //   child: [
+  //     {
+  //       childtitle: "Data DO",
+  //       childlink: "/do",
+  //     },
+  //     {
+  //       childtitle: "Data DO Retur",
+  //       childlink: "/doreturn"
+  //     },  
+  //     {
+  //       childtitle: "Data DO Sementara",
+  //       childlink: "/dotemp"
+  //     },  
+  //   ]
+  // },
 
   {
-    title: "Data Stok",
+    title: "Data Produk",
     icon: "heroicons-outline:archive-box",
-    link: '/stocks'
+    link: '/product'
   },
 
   // {
@@ -75,46 +75,32 @@ export const topMenu = [
     link: "dashboard",
   },
 
-  {
-    title: "Master PO",
-    icon: "heroicons-outline:clipboard-document",
-    link: "/app/home",
-    isHide: true,
-    child: [
-      {
-        childtitle: "Data PO",
-        link: "/po",
-        childicon: "heroicons-outline:document",
-      },
-      {
-        childtitle: "Penerimaan PO",
-        link: "/receivepo",
-        childicon: "heroicons-outline:clipboard-document-check",
-      },
-   
-    ],
-  },
-
   //Menu Master Pengguna
   {
-    title: "Master Stock",
+    title: "Master Produk",
     icon: "heroicons-outline:archive-box-arrow-down",
     link: "/app/home",
     isHide: true,
     child: [
       {
-        childtitle: "Data Stock",
-        link: "/stock",
+        childtitle: "Data Produk",
+        link: "/product",
         childicon: "heroicons-outline:folder-open",
       },
-      {
-        childtitle: "Stock Opname",
-        link: "/stockopname",
-        childicon: "heroicons-outline:folder-open",
-      },
+      // {
+      //   childtitle: "Stock Opname",
+      //   link: "/stockopname",
+      //   childicon: "heroicons-outline:folder-open",
+      // },
    
     ],
   },
+
+  // {
+  //   title: "Pesanan",
+  //   icon: "heroicons-outline:clipboard-document",
+  //   link: "/order",
+  // },
 ];
 
 // import User1 from "@/assets/images/all-img/user.png";

@@ -45,7 +45,6 @@ const LoginForm = () => {
     try {
       const response = await axios.post(ApiEndpoint.LOGIN, formData);
       localStorage.setItem("token", response?.data?.data?.token);
-      localStorage.setItem("is_spv", response?.data?.data?.is_spv);
       setIsLoadingButton(false);
       navigate("/dashboard");
     } catch (error) {

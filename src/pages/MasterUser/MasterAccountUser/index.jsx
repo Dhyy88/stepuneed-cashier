@@ -269,7 +269,7 @@ const Users = () => {
     <>
       <div className="grid grid-cols-12 gap-6">
         <div className="lg:col-span-9 col-span-12">
-          <Card title="Data Admin SJM">
+          <Card title="Data Admin">
             <div className="md:flex justify-end items-center mb-4">
               <div className="md:flex items-center gap-3">
                 <div className="row-span-3 md:row-span-4 mb-2">
@@ -373,7 +373,7 @@ const Users = () => {
                         </div>
                         <div className="w-full flex justify-center text-secondary">
                           <span className="text-slate-900 dark:text-white text-[20px] transition-all duration-300">
-                            Admin SJM belum tersedia
+                            Admin belum tersedia
                           </span>
                         </div>
                       </div>
@@ -539,7 +539,7 @@ const Users = () => {
           </Card>
         </div>
         <div className="lg:col-span-3 col-span-12">
-          <Card title={editMode ? "Ubah Admin SJM" : "Tambah Admin SJM"}>
+          <Card title={editMode ? "Ubah Admin" : "Tambah Admin"}>
             <div className="text-sm text-slate-600 font-normal bg-white dark:bg-slate-900 dark:text-slate-300 rounded p-5">
               <div className="text-base text-slate-600 dark:text-slate-300 mb-4">
                 <Textinput
